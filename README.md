@@ -1,6 +1,5 @@
 # 📕 Bookquet 💐
-<!-- (coba coba) Untuk kamu yang belum dapat karangan bunga dari si Doi, Bookquet datang memberikan solusi -->
-~Di setiap buku, terdapat karangan kata-kata berbunga~
+\~ Di setiap buku, terdapat karangan kata-kata berbunga \~
 
 > "If you don’t like to read, you haven’t found the right book." – **J.K. Rowling**
 
