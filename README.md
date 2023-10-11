@@ -23,8 +23,8 @@ Dalam rangka diselenggarakannya Kongres Bahasa Indonesia XII pada bulan Oktober 
 Berikut ini adalah daftar modul yang akan kami implementasikan beserta pengembang dari setiap modul.
 | Modul | Pengembang |
 | -- | -- |
-| *Register*, *login*, *logout* |-|
-| *Dashboard user* |-|
+| *Register*, *login*, *logout*, *Dashboard user* |-|
+| Hall of Bookquet |-|
 | *Review* dan *rate* buku |-|
 | Baca nanti |-|
 | *Filter* dan *search* |-|
