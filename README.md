@@ -1,5 +1,6 @@
 # 📕 Bookquet 💐
-\~ Di setiap buku, terdapat karangan kata-kata berbunga \~
+<!-- (coba coba) Untuk kamu yang belum dapat karangan bunga dari si Doi, Bookquet datang memberikan solusi -->
+~Di setiap buku, terdapat karangan kata-kata berbunga~
 
 > "If you don’t like to read, you haven’t found the right book." – **J.K. Rowling**
 
@@ -21,14 +22,15 @@ Dalam rangka diselenggarakannya Kongres Bahasa Indonesia XII pada bulan Oktober 
 
 ## 📚 Daftar Modul
 Berikut ini adalah daftar modul yang akan kami implementasikan beserta pengembang dari setiap modul.
-| Modul | Pengembang |
-| -- | -- |
-| *Register*, *login*, *logout*, *Dashboard user* |-|
-| Hall of Bookquet |-|
-| *Review* dan *rate* buku |-|
-| Baca nanti |-|
-| *Filter* dan *search* |-|
-
+ 
+| Modul | Penjelasan | Pengembang |
+| -- | -- | -- |
+| **Authentication** | Pengguna pada aplikasi Django ini dapat melakukan registrasi, *login*, dan *logout*. Pengguna dapat mengubah *password* mereka. | Carissa |
+| **Dashboard** | Menampilkan informasi pribadi pengguna. | Carissa |
+| **Homepage** | Menampilkan halaman utama berupa daftar buku. Pengguna disambut dengan *hero block* dan daftar buku dibawahnya. Pengguna juga bisa menggunakan fitur *filter* dan *search* untuk mencari buku berdasarkan *genre* dan judul. | Akmal |
+| **Book Preview**| Menampilkan informasi suatu buku seperti sinopsis, pengarang, ISBN, dan lain-lain. Pengguna dapat memberikan *review*, *rate*, atau memasukkan buku ke dalam daftar baca nanti.  | William |
+| **Read Later** | Pengguna dapat menambahkan suatu buku ke dalam daftar baca nanti. Dalam aplikasi Django ini, pengguna dapat melihat daftar buku yang ditambahkan dan dapat menghapus buku tersebut dari daftar baca nanti. | Edbert |
+| **Rate & Review Book** | Pengguna juga dapat menambahkan *review* dan *rating* pada suatu buku. Pada aplikasi ini, pengguna dapat melihat daftar buku yang sudah diberi *review* dan *rating* serta dapat mengedit salah satunya. | Farah |
 
 ## 🕵️ *Role* atau Peran Pengguna 
 ### 1. 👨‍💻 User
@@ -40,7 +42,9 @@ Berikut ini adalah daftar modul yang akan kami implementasikan beserta pengemban
 
 #### 🔒 User yang Belum Terautentikasi
 - Melakukan pencarian dan *filter* berdasarkan genre
+- Melihat buku pada halaman utama
 ### 2. 👩‍💻 Admin
+- Melakukan register dan login sebagai pembaca
 - Menambahkan dan menghapus daftar buku
 - Menghapus *review user* pada suatu buku
 
