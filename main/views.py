@@ -5,7 +5,11 @@ from django.http import HttpResponse
 from main.models import Book
 
 def show_main(request):
-    return render(request, "main.html")
+    books = Book.objects.all()
+    context = {
+        'books': books, 
+    }
+    return render(request, "main.html", context)
 
 def get_books(request):
     data = Book.objects.all()
