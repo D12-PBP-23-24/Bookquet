@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <style>
+    #hero-outer {
+      background-color:#defff2;
+    }
+    #hero-inner {
+      padding-top: 50px;
+      padding-bottom: 30px;
+    }
+    #search-outer {
+      background-color: #408558;
+    }
+    #search-button {
+      padding: 20px 30px 20px 30px;
+    }
+    #search-bg {
+      background: linear-gradient(
+        to top,
+        white 0%,
+        white 50%,
+        #defff2 50%,
+        #defff2 100%
+      );
+    }
+
+  </style>
+
+  <header id="hero-outer" class="p-4 rounded-3">
+    <div id="hero-inner" class="container">
+      <h1 class="display-4 fw-bold"> 📕 Bookquet 💐 </h1>
+      <p class="col-md-8 lead"> Di setiap buku, terdapat karangan kata-kata berbunga! ✨ </p>
+      <figure>
+        <blockquote class="blockquote">
+          <p>If you don’t like to read, you haven’t found the right book.</p>
+        </blockquote>
+        <figcaption class="blockquote-footer">
+          <cite title="Source Title">J.K. Rowling</cite>
+        </figcaption>
+      </figure>
+    </div>
+  </header>
+
+  <div id="search-bg">
+    <div id="search-outer" class="container rounded-pill w-75"> 
+      <div id="search-button" class="d-flex align-items-center justify-content-center input-group mb-3">
+        <input type="text" class="form-control" placeholder="Judul buku" aria-label="Judul buku" aria-describedby="find-button">
+        <button class="btn btn-primary" type="button" id="find-button">Cari</button>
+      </div>
+    </div>
+  </div>
+  
+{% endblock %}

@@ -1,3 +1,12 @@
 from django.shortcuts import render
+from django.core import serializers
+from django.http import HttpResponse
 
-# Create your views here.
+from main.models import Book
+
+def show_main(request):
+    return render(request, "main.html")
+
+def get_books(request):
+    data = Book.objects.all()
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
