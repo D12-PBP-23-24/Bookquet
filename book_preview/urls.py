@@ -16,10 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from book_preview.views import show_main
+from book_preview.views import show_preview
 
 app_name = 'book_preview'
 
 urlpatterns = [
-    path('as', show_main, name='show_main'),
+    path('preview/<int:id>', show_preview, name='show_preview'),
 ]

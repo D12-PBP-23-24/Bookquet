@@ -1,9 +1,68 @@
 {% extends 'base.html' %}
+{% load static %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@900&display=swap" rel="stylesheet">
 
 {% block content %}
+<style>
+    .h-full{
+        height: 95vh;
+    }
 
-<div>
-    asuuu
+    .font-lato{
+        font-family: 'Lato', sans-serif;
+        font-weight: 700;
+    }
+</style>
+
+<div class="d-flex bg-primary-subtle flex-row h-full" style="padding: 70px 100px">
+    <div class="container d-flex flex-column gap-3">
+        <h1 class="font-lato">{{book.title}}</h1>
+
+        <text>
+            <span>by: {{book.author}}</span>
+            <span>{{book.genres}}</span>
+        </text>
+       
+        <section>
+            <img src="{% static 'images/star.png' %}" style="width: 40px; height: 40px;"></img>
+            <img src="{% static 'images/star.png' %}" style="width: 40px; height: 40px;"></img>
+            <img src="{% static 'images/star.png' %}" style="width: 40px; height: 40px;"></img>
+            <img src="{% static 'images/star.png' %}" style="width: 40px; height: 40px;"></img>
+            <img src="{% static 'images/star.png' %}" style="width: 40px; height: 40px;"></img>
+        </section>
+       
+
+    <p>{{book.description}}</p>
+
+    </div>
+
+    <img src="{{book.cover_img}}" class="w-5"></img>
+
+
+</div>
+
+<div class="container d-flex flex-row" style="padding: 50px 0px; gap: 40px;">
+    <section>
+        <h1>Beri Ulasan pada Bookquet ini</h1>
+        <form method="/POST" class="d-flex flex-column">
+            <label></label>
+
+            <label>Komentar:</label>
+            <textarea></textarea>
+
+            <button onclick="onsubmit">Kirim</button>
+        </form>
+
+    </section>
+
+    <section>
+        aaaa
+    </section>
+
+
 </div>
 
 {% endblock content %}

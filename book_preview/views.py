@@ -1,13 +1,12 @@
 from django.shortcuts import render
+from main.models import Book
 
-# Create your views here.
-def show_main(request):
-    # products = .objects.all()
-
+def show_preview(request, id):
+    book = Book.objects.get(pk = id)
+    
     context = {
-        'name': 'Pak Bepe', # Nama kamu
-        'class': 'PBP A', # Kelas PBP kamu
-        # 'products': products
+        "book": book
     }
 
+    print(book.title)
     return render(request, "preview.html", context)
