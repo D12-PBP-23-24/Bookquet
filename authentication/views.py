@@ -8,7 +8,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 # Create your views here.
-def register(request): # no button yet
+def register(request):
     form = UserCreationForm()
 
     if request.method == "POST":
@@ -20,7 +20,7 @@ def register(request): # no button yet
     context = {'form':form}
     return render(request, 'register.html', context)
 
-def login_user(request): # no button yet
+def login_user(request): # no button on main page yet (when accessed without login)
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -31,7 +31,7 @@ def login_user(request): # no button yet
             response.set_cookie('last_login', str(datetime.datetime.now()))
             return response
 
-def logout_user(request): # no button yet
+def logout_user(request):
     logout(request)
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
