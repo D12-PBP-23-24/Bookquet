@@ -1,13 +1,40 @@
-<h1>Shopping List Page</h1>
+{% block content %}
 
-<h5>title: </h5>
-<p>{{ title }}<p>
+    <h1>Admin Page</h1>
 
-<h5>author: </h5>
-<p>{{ author }}<p>
+    <h5>title:</h5>
+    <p>{{title}}</p>
 
-<h5>description: </h5>
-<p>{{ description }}<p>
+    <h5>author:</h5>
+    <p>{{author}}</p>
+
+    <h5>desc:</h5>
+    <p>{{description}}</p>
+
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Description</th>
+        </tr>
     
-<h5>publish date: </h5>
-<p>{{ publish_date }}<p>
+        {% comment %} Berikut cara memperlihatkan data produk di bawah baris ini {% endcomment %}
+    
+        {% for product in products %}
+            <tr>
+                <td>{{books.name}}</td>
+                <td>{{books.price}}</td>
+                <td>{{books.description}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    
+    <br />
+    
+    <a href="{% url 'adminpage:add_book' %}">
+        <button>
+            Add a New Product
+        </button>
+    </a>
+    
+{% endblock content %}
