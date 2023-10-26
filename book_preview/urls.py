@@ -21,5 +21,5 @@ from book_preview.views import show_main
 app_name = 'book_preview'
 
 urlpatterns = [
-    path('', show_main, name='show_main'),
+    path('as', show_main, name='show_main'),
 ]
