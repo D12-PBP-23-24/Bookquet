@@ -77,20 +77,6 @@
   <div class="container">
     <div class="container">
       <div class="row row-cols-2 row-cols-md-4 g-4" id="buku">
-        {% for book in books %}
-          <div class="col">
-            <div class="card h-100" data-genre="{{ book.genres }}">
-              <img src= {{ book.cover_img }} class="card-img-top">
-              <div class="card-body">
-                <h5 class="card-title fw-bold"> {{ book.title }} </h5>
-                <p class="card-text"><small class="text-body-secondary"> {{ book.author }} </small></p>
-                <p class="card-text"><small class="text-body-success border border-success rounded p-1"> {{ book.genres }} </small></p>
-              </div>
-              <a href="#" class="stretched-link"></a>
-              <div class="card-footer text-muted"> <i class="bi bi-bookmark-plus"></i> Read Later </div>
-            </div>
-          </div>
-        {% endfor %}
       </div>
     </div>
   </div>
@@ -115,6 +101,7 @@
                 </div>
                 <div class="mb-3">
                   <p class="fw-bold"> Genre: </p>
+                  {{ form.genre.label_tag }}
                   {{ form.genres }}
                 </div>
               </form>
@@ -127,59 +114,86 @@
   </div>
 
   <script>
-    function searchBook() {
-        const title = document.querySelector('#id_title').value;
-        const genre = document.querySelector('#id_genres').value;
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-        fetch("{% url 'main:find_book' %}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": csrfToken,
-            },
-            body: JSON.stringify({ title, genre }),
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            // Clear existing cards
-            const bukuDiv = document.getElementById('buku');
-            bukuDiv.innerHTML = '';
-
-            // Populate cards with the search results
-            data.books.forEach((book) => {
-                const card = document.createElement('div');
-                card.className = 'col';
-                card.innerHTML = `
-                    <div class="card h-100" data-genre="${book.genres}">
-                        <img src="${book.cover_img}" class="card-img-top">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">${book.title}</h5>
-                            <p class="card-text"><small class="text-body-secondary">${book.author}</small></p>
-                            <p class="card-text"><small class="text-body-success border border-success rounded p-1">${book.genres}</small></p>
-                        </div>
-                        <a href="#" class="stretched-link"></a>
-                        <div class="card-footer text-muted"> <i class="bi bi-bookmark-plus"></i> Read Later </div>
-                    </div>
-                `;
-                bukuDiv.appendChild(card);
-            });
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+    async function getBooks() {
+      return fetch("{% url 'main:get_book_json' %}").then((res) => res.json());
     }
 
-    document.getElementById("button_add").addEventListener('click', function (event) {
-        event.preventDefault(); // Prevent default form submission
-        searchBook(); // Call the searchBook function
-    });
-  </script>
+    // Fungsi untuk menampilkan buku berdasarkan genre
+    async function filterBooksByGenre(genre) {
+      document.getElementById("buku").innerHTML = ``;
+      const books = await getBooks();
+      let htmlString = ``;
 
+      books.forEach((book) => {
+        if (genre === 'All' || book.fields.genres.toLowerCase() === genre.toLowerCase()) {
+          htmlString +=
+          `
+          <div class="col"\>
+            <div class="card h-100" data-genre="${book.fields.genres}"\>
+              <img src= ${book.fields.cover_img} class="card-img-top"\>
+              <div class="card-body"\>
+                <h5 class="card-title fw-bold"> ${book.fields.title} </h5\>
+                <p class="card-text"><small class="text-body-secondary"> ${book.fields.author} </small></p\>
+                <p class="card-text"><small class="text-body-success border border-success rounded p-1"> ${book.fields.genres} </small></p\>
+              </div\>
+              <a href="#" class="stretched-link"></a>
+              <div class="card-footer text-muted"> <i class="bi bi-bookmark-plus"></i> Read Later </div>
+            </div\>
+          </div\>`;
+        }
+      });
+      
+      document.getElementById("buku").innerHTML = htmlString;
+    }
+
+    filterBooksByGenre("All");
+  
+    // Fungsi untuk menampilkan buku berdasarkan judul
+    async function filterBooksByTitle(title) {
+      document.getElementById("buku").innerHTML = ``;
+      const books = await getBooks();
+      let htmlString = ``;
+
+      books.forEach((book) => {
+        if (book.fields.title.toLowerCase().includes(title.toLowerCase())) {
+          htmlString +=
+          `
+          <div class="col"\>
+            <div class="card h-100" data-genre="${book.fields.genres}"\>
+              <img src= ${book.fields.cover_img} class="card-img-top"\>
+              <div class="card-body"\>
+                <h5 class="card-title fw-bold"> ${book.fields.title} </h5\>
+                <p class="card-text"><small class="text-body-secondary"> ${book.fields.author} </small></p\>
+                <p class="card-text"><small class="text-body-success border border-success rounded p-1"> ${book.fields.genres} </small></p\>
+              </div\>
+            </div\>
+          </div\>`;
+        }
+      });
+      
+      document.getElementById("buku").innerHTML = htmlString;
+    }
+  
+    // Event listener untuk tombol genre
+    // const genreButtons = document.querySelectorAll('.btn-check');
+    // genreButtons.forEach((button) => {
+    //  button.addEventListener('click', () => {
+    //    const selectedGenre = button.value;
+    //    filterBooksByGenre(selectedGenre);
+    //  });
+    // });
+
+    function searchBook() {
+      fetch("{% url 'main:find_book' %}", {
+        method: "POST",
+        body: new FormData(document.querySelector('#form'))
+      })
+
+      document.getElementById("form").reset()
+      return false
+    }
+
+    document.getElementById("button_add").onclick = searchBook
+
+  </script>
 {% endblock %}
