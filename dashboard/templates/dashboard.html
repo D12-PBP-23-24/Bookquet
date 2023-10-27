@@ -24,26 +24,40 @@
         <div class="container text-center">
             <ul class="list-group mb-4">
                 <li class="list-group-item">
-                    <span class="fw-bold">Nickname : </span> <span id="nickname">Nickname</span>
+                    <span class="fw-bold">Nickname : </span> <span id="nickname">{{profile.nickname}}</span>
                 </li>
                 <li class="list-group-item">
-                    <span class="fw-bold">Username : </span> <span id="Username">Username</span>
+                    <span class="fw-bold">Username : </span> <span id="Username">{{profile.username}}</span>
                 </li>
                 <li class="list-group-item">
-                    <span class="fw-bold">Age : </span> <span id="age">Age</span>
+                    <span class="fw-bold">Age : </span> <span id="age">{{profile.age}}</span>
                 </li>
                 <li class="list-group-item">
-                    <span class="fw-bold">Phone Number : </span> <span id="phone">Phone Number</span>
+                    <span class="fw-bold">Phone Number : </span> <span id="phone">{{profile.phone}}</span>
                 </li>
                 <li class="list-group-item">
-                    <span class="fw-bold">Region : </span> <span id="region">Region</span>
+                    <span class="fw-bold">Region : </span> <span id="region">{{profile.region}}</span>
                 </li>
             </ul>
-            <button type="button" class="btn btn-success" id="editProfileButton">
-                Edit Profile
-            </button>
         </div>
     </div>
+</div>
+
+
+
+<div class="hero-container">
+    <div class="profile-header">
+        <h1 class="display-4">User Profile</h1>
+    </div>
+    <div class="d-flex align-items-center justify-content-center">
+        <div class="container text-center" id="information"></div>
+    </div>
+    <button type="button" class="btn btn-success" id="editProfileButton">
+        Edit Profile
+    </button>
+    <br>
+    <h3 class="container text-center">Buku yang sudah di review : </h3>
+
 </div>
 
 
@@ -58,23 +72,23 @@
                 <form id="form">
                     {% csrf_token %}
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="inputNickname" placeholder="name">
+                        <input type="text" class="form-control" id="nickname" placeholder="name">
                         <label for="nickname">Nickname</label>
                       </div>
                       <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="inputUsername" placeholder="username">
+                        <input type="text" class="form-control" id="username" placeholder="username">
                         <label for="username">Username</label>
                       </div>
                       <div class="form-floating mb-3">
-                        <input type="number" class="form-control" id="inputAge" placeholder="age">
+                        <input type="number" class="form-control" id="age" placeholder="age">
                         <label for="age">Age</label>
                       </div>
                     <div class="form-floating mb-3">
-                        <input type="number" class="form-control" id="inputPhone" placeholder="phone number">
+                        <input type="number" class="form-control" id="phone" placeholder="phone number">
                         <label for="phone">Phone Number</label>
                       </div>
                      <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="inputRegion" placeholder="region">
+                        <input type="text" class="form-control" id="region" placeholder="region">
                         <label for="region">Region</label>
                       </div>
                 </form>
@@ -88,22 +102,70 @@
     
 </div>
 
+
+
 <script>
     async function getProfile() {
-        const response = await fetch("{% url 'dashboard:get_profile_json' %}");
-        if (response.ok) {
-            const data = await response.json();
-            document.getElementById("nickname").textContent = data.nickname;
-            document.getElementById("username").textContent = data.username;
-            document.getElementById("age").textContent = data.age;
-            document.getElementById("phone").textContent = data.phone;
-            document.getElementById("region").textContent = data.region;
-        } else {
-            console.error("Failed to fetch profile data");
-        }
+        return fetch("{% url 'dashboard:get_profile_json' %}").then((res) => res.json()); 
     }
 
-    getProfile();
+    async function refreshProfile() {
+        document.getElementById("information").innerHTML = ""
+        const profile = await getProfile()
+        let htmlString =  ``
+        profile.forEach((prof) => {
+        htmlString += `
+            <div class="container text-center">
+                <ul class="list-group mb-4">
+                    <li class="list-group-item">
+                        <span class="fw-bold" id="nickname">${prof.field.nickname}</span> 
+                    </li>
+                    <li class="list-group-item">
+                        <span class="fw-bold" id="username">${prof.field.username}</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="fw-bold" id="age">${prof.field.age}</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="fw-bold" id="phone">${prof.field.phone}</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="fw-bold" id="region">${prof.field.region}</span>
+                    </li>
+                </ul>
+            </div>`;
+
+        document.getElementById("information").innerHTML = htmlString
+    })
+    }
+    refreshProfile()
+
+
+    // async function refreshProfile() {
+    //     document.getElementById("information").innerHTML = ""
+    //     const profile = await getProfile()
+    //     let htmlString = `<tr>
+    //         <th>nickname</th>
+    //         <th>username</th>
+    //         <th>age</th>
+    //         <th>phone</th>
+    //         <th>region</th>
+    //     </tr>`
+    //     profile.forEach((prof) => {
+    //         htmlString += `\n<tr>
+    //         <td>${prof.field.nickname}</td>
+    //         <td>${prof.field.username}</td>
+    //         <td>${prof.field.age}</td>
+    //         <td>${prof.field.phone}</td>
+    //         <td>${prof.field.region}</td>
+    //     </tr>` 
+    //     })
+        
+    //     document.getElementById("information").innerHTML = htmlString
+    // }
+
+    // refreshProfile()
+
 
 
     async function editProfile() {
@@ -111,7 +173,7 @@
             method: "POST",
             body: new FormData(document.querySelector('#form'))
         }).then(() => {
-            getProfile();
+            refreshProfile();
             document.getElementById("form").reset(); 
             $('#ProfileModal').modal('hide');
         });
@@ -122,7 +184,7 @@
     document.getElementById("button_edit").onclick = editProfile;
 
     document.getElementById("editProfileButton").onclick = function () {
-        getProfile();
+        refreshProfile();
         $('#ProfileModal').modal('show');
     };
 
@@ -134,6 +196,7 @@
         document.getElementById("form").reset();
     });
 
-    getProfile();
+    // getProfile();
+    refreshProfile();
 </script>
 {% endblock content %}

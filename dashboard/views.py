@@ -20,10 +20,43 @@ def get_profile_json(request):
         'nickname': profile.nickname,
         'username': profile.username,
         'age': profile.age,
-        'phonenumber': profile.phone,
+        'phone': profile.phone,
         'region': profile.region,
     }
     return JsonResponse(profile_data)
+
+# @csrf_exempt
+# def get_profile_json(request):
+#     profiles = Profile.objects.filter(user=request.user)
+#     prof_list = []
+#     for prof in profiles:
+#         prof_dict = {
+#             'nickname': prof.nickname,
+#             'username': prof.username,
+#             'age': prof.age,
+#             'phone': prof.phone,
+#             'region': prof.region,
+#         }
+#         prof_list.append(prof_dict)
+#     return JsonResponse(prof_list, safe=False)
+
+# ...
+# @csrf_exempt
+# def edit_profile_ajax(request):
+#     if request.method == 'POST':
+#         form = ProfileForm(request.POST)
+
+#         if form.is_valid():
+#             prof = form.save(commit=False)
+#             prof.user = request.user
+#             prof.save()
+#             return HttpResponse("Created", status=201)
+#         else:
+#             # Handle form validation errors and return as JSON
+#             errors = form.errors.as_json()
+#             return HttpResponseBadRequest(errors, content_type='application/json')
+
+#     return HttpResponseNotFound()
 
 ...
 @csrf_exempt
@@ -33,6 +66,7 @@ def edit_profile_ajax(request):
     
     if request.method == 'POST':
         form = ProfileForm(request.POST, instance=profile)  #isi formulir dengan data profil pengguna
+        print(formj)
         if form.is_valid():
             form.save() 
             return JsonResponse({'message': 'Profile updated successfully'})

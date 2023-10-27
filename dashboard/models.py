@@ -8,6 +8,7 @@ class Book(models.Model):
     publish_date = models.DateField()
 
 class Profile(User):
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     nickname = models.TextField(null=True, blank=True)
     phone = models.IntegerField()
     age = models.IntegerField()
