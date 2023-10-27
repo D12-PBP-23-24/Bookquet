@@ -47,7 +47,7 @@
 
     async function refreshProducts(priority = "all") { // "all" is the default value
         currentPriority = priority; 
-         document.getElementById("item_card").innerHTML = "";
+        document.getElementById("item_card").innerHTML = "";
         const items = await getItem(priority);
         
         items.forEach((item) => {

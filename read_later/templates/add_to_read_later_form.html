@@ -35,8 +35,8 @@
         }
     })
     .then(response => {
-        if (!response.ok) { // If HTTP status code is not ok
-            throw new Error('Buku sudah pernah ditambahkan ke read later dengan prioritas lain'); // This will go to the .catch section
+        if (!response.ok) { 
+            throw new Error('Buku sudah pernah ditambahkan ke read later dengan prioritas lain'); 
         }
         return response.json();
     })

@@ -14,10 +14,10 @@ from django.urls import reverse
 from django.contrib import messages  
 import json
 
-@login_required
-def all_list(request):
-    books = Book.objects.all()
-    return render(request, 'list.html', {"books":books})
+# @login_required
+# def all_list(request):
+#     books = Book.objects.all()
+#     return render(request, 'list.html', {"books":books})
 
 @login_required
 def read_later_list_json(request):
@@ -86,34 +86,4 @@ def delete_item_ajax(request, item_id):
         return HttpResponse({'status': 'DELETED'}, status=200)
 
 
-def register(request):
-    form = UserCreationForm()
 
-    if request.method == "POST":
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Your account has been successfully created!')
-            return redirect('read_later:login')
-    context = {'form':form}
-    return render(request, 'register.html', context)
-
-def login_user(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            response = HttpResponseRedirect(reverse("read_later:all_list")) 
-            return response
-        else:
-            messages.info(request, 'Sorry, incorrect username or password. Please try again.')
-    context = {}
-    return render(request, 'login.html', context)
-
-def logout_user(request):
-    logout(request)
-    response = HttpResponseRedirect(reverse('main:login'))
-    response.delete_cookie('last_login')
-    return response

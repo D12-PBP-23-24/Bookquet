@@ -4,7 +4,7 @@ from . import views
 app_name = "read_later"
 
 urlpatterns = [
-    path('', views.all_list, name="all_list"),
+    # path('', views.all_list, name="all_list"),
     path('read/', views.read_later_list, name="read_later_list"),
     path('read/json/', views.read_later_list_json, name="read_later_list_json"),
     path('add-to-read-later/<int:book_id>/', views.add_to_read_later, name='add_to_read_later'),
