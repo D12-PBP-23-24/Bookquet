@@ -25,6 +25,19 @@
                 <td>{{books.name}}</td>
                 <td>{{books.price}}</td>
                 <td>{{books.description}}</td>
+
+                <td>
+                    <a href="{% url 'main:edit_book' books.pk %}">
+                        <button>
+                            Edit
+                        </button>
+                    </a>
+                    <a href="{% url 'main:delete_book' books.pk %}">
+                          <button>
+                              Delete
+                          </button>
+                      </a>
+                </td>
             </tr>
         {% endfor %}
     </table>
@@ -33,7 +46,7 @@
     
     <a href="{% url 'adminpage:add_book' %}">
         <button>
-            Add a New Product
+            Add a New Book
         </button>
     </a>
     

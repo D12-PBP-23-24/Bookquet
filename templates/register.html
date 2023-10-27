@@ -7,16 +7,14 @@
 {% block content %}
 
 <div class="login">
-
     <h1>Register</h1>
-
-    <form method="post">
+    <form method="POST">
         {% csrf_token %}
         <table>
             {{ form.as_table }}
             <tr>
                 <td></td>
-                <td><input type="submit" name="submit" value="Create an Account" /></td>
+                <td><input type="submit" name="submit" value="Daftar" /></td>
             </tr>
         </table>
     </form>
@@ -27,8 +25,7 @@
                 <li>{{ message }}</li>
             {% endfor %}
         </ul>
-    {% endif }
-
-    </div>
+    {% endif %}
+</div>
 
 {% endblock content %}
