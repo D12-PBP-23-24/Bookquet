@@ -10,7 +10,7 @@ urlpatterns = [
     path('add-to-read-later/<int:book_id>/', views.add_to_read_later, name='add_to_read_later'),
     path('delete_item_ajax/<int:item_id>/', views.delete_item_ajax, name='delete_item_ajax'),
 
-    path('register/', views.register, name='register'), 
-    path('login/', views.login_user, name='login'), 
-    path('logout/', views.logout_user, name='logout'),
+    # path('register/', views.register, name='register'), 
+    # path('login/', views.login_user, name='login'), 
+    # path('logout/', views.logout_user, name='logout'),
 ]

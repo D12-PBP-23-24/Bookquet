@@ -80,7 +80,7 @@
             });
 
             if (response.ok) {
-                refreshProducts(currentPriority); // Refresh products after deletion
+                refreshProducts(currentPriority); 
             } else {
                 console.error('Failed to delete product. Server responded with:', response.statusText);
             }
