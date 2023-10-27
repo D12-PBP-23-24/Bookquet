@@ -1,0 +1,53 @@
+{% block content %}
+
+    <h1>Admin Page</h1>
+
+    <h5>title:</h5>
+    <p>{{title}}</p>
+
+    <h5>author:</h5>
+    <p>{{author}}</p>
+
+    <h5>desc:</h5>
+    <p>{{description}}</p>
+
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Description</th>
+        </tr>
+    
+        {% comment %} Berikut cara memperlihatkan data produk di bawah baris ini {% endcomment %}
+    
+        {% for product in products %}
+            <tr>
+                <td>{{books.name}}</td>
+                <td>{{books.price}}</td>
+                <td>{{books.description}}</td>
+
+                <td>
+                    <a href="{% url 'main:edit_book' books.pk %}">
+                        <button>
+                            Edit
+                        </button>
+                    </a>
+                    <a href="{% url 'main:delete_book' books.pk %}">
+                          <button>
+                              Delete
+                          </button>
+                      </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    
+    <br />
+    
+    <a href="{% url 'adminpage:add_book' %}">
+        <button>
+            Add a New Book
+        </button>
+    </a>
+    
+{% endblock content %}
