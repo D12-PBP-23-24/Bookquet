@@ -103,6 +103,7 @@ def add_to_read_later(request, book_id):
             data['redirect_url'] = reverse('read_later:read_later_list')
             return JsonResponse(data)
         else:
+            
             data['error'] = 'Invalid form data.'
             return JsonResponse(data, status=400)
     else:

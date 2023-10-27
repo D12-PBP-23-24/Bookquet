@@ -1,15 +1,26 @@
 {% extends 'base.html' %}
 
+
 {% block content %}
-<h2>Add "{{ book.title }}" to Read Later</h2>
 
+<style>
+    #centerContainer{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+</style>
 
-<form id="readLaterForm">
-    {% csrf_token %}
-    <label for="priority">Priority: </label>
-    {{ form.priority }}
-    <button type="button" onclick="submitFormAjax()">Add to Read Later</button>
-</form>
+<div id = "centerContainer" class="d-flex flex-column">
+    <h2>Add "{{ book.title }}" to Read Later</h2>
+    <form id="readLaterForm">
+        {% csrf_token %}
+        <label for="priority">Priority: </label>
+        {{ form.priority }}
+        <button type="button" onclick="submitFormAjax()">Add to Read Later</button>
+    </form>
+</div>
 
 <script>
     function submitFormAjax() {
@@ -17,25 +28,30 @@
         const formData = new FormData(form);
 
         fetch("{% url 'read_later:add_to_read_later' book.id %}", {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Book added to Read Later list!');
-                window.location.href = data.redirect_url;
-            } else {
-                // Handle error
-                alert('Error: ' + data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => {
+        if (!response.ok) { // If HTTP status code is not ok
+            throw new Error('Buku sudah pernah ditambahkan ke read later dengan prioritas lain'); // This will go to the .catch section
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) { 
+            alert('Book added to Read Later list!');
+            window.location.href = data.redirect_url;
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert(error.message);
+        console.error('Error:', error);
+    });
     }
 </script>
 {% endblock %}
