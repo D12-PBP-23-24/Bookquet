@@ -19,8 +19,7 @@ def add_book(request):
 
     if form.is_valid() and request.method == "POST":
         form.save()
-        return HttpResponseRedirect(reverse('adminpage:show_main'))
-
+        return HttpResponseRedirect(reverse('main:show_main'))
     context = {'form': form}
     return render(request, "add_book.html", context)
 

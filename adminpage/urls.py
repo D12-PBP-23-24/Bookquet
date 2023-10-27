@@ -7,7 +7,6 @@ from adminpage.views import get_book_json, get_books
 app_name = 'adminpage'
 
 urlpatterns = [
-    path("", show_main, name='show_main'),
     path('add-book', add_book, name='add_book'),
     path('xml/', show_xml, name='show_xml'), 
     path('json/', show_json, name='show_json'), 
