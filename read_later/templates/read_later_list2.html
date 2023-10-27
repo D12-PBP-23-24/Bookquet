@@ -1,8 +1,16 @@
 {% extends 'base.html' %}
 
+{% load static %}
 {% block content %}
 <div class="container mt-4">
-    <h2 class="mb-4">Your read later list</h2>
+    <div class="row align-items-center"> <!-- Use the row class to create a new row and align-items-center for vertical alignment -->
+        <div class="col-md-8"> <!-- Adjust the width of the text column by changing the number in col-md-* -->
+            <h2 class="mb-4">Your read later list</h2>
+        </div>
+        <div class="col-md-4">
+            <img src="{% static 'images/icon.png' %}" class="img-fluid" style="max-width: 30px;" /> <!-- img-fluid makes the image responsive and max-width adjusts its size -->
+        </div>
+    </div>
 
     <div class="btn-group" role="group" aria-label="Priority Filter">
         <div class="btn-group" role="group" aria-label="Priority Filter">
