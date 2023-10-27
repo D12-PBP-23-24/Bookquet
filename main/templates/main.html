@@ -13,7 +13,7 @@
       background-color: #408558;
     }
     #search-button {
-      padding: 20px 30px 20px 30px;
+      padding: 20px 10px 20px 10px;
     }
     #search-bg {
       background: linear-gradient(
@@ -26,6 +26,9 @@
     }
     .book {
       padding: 10px 10px 10px 10px;
+    }
+    .hide {
+      display: none;
     }
 
   </style>
@@ -48,7 +51,7 @@
   <div id="search-bg">
     <div id="search-outer" class="container rounded-pill w-75"> 
       <div id="search-button" class="d-flex align-items-center justify-content-center input-group mb-3">
-        <input type="text" class="form-control" placeholder="Judul buku" aria-label="Judul buku" aria-describedby="find-button">
+        <input id="find-text" type="text" class="form-control" placeholder="Judul buku" aria-label="Judul buku" aria-describedby="find-button">
         <button class="btn btn-primary" type="button" id="find-button">Cari</button>
       </div>
     </div>
@@ -57,74 +60,130 @@
   <h5 class="container d-flex justify-content-center fw-bold"> Genres </h5>
   
   <div class="container">
-    <div class="btn-group d-flex flex-wrap justify-content-center" role="group" aria-label="Basic radio toggle button group">
-      <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+    <div class="btn-group d-flex flex-wrap justify-content-center p-4" role="group" aria-label="Basic radio toggle button group">
+      <input type="radio" class="btn-check" name="btnradio" value="All" id="btnradio1" autocomplete="off" checked>
       <label class="btn btn-outline-success btn-sm" for="btnradio1">All</label>
     
-      <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+      <input type="radio" class="btn-check" name="btnradio" value="Young Adult" id="btnradio2" autocomplete="off">
       <label class="btn btn-outline-success btn-sm" for="btnradio2">Young Adult</label>
     
-      <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
+      <input type="radio" class="btn-check" name="btnradio" value="Fantasy" id="btnradio3" autocomplete="off">
       <label class="btn btn-outline-success btn-sm" for="btnradio3">Fantasy</label>
 
-      <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off">
+      <input type="radio" class="btn-check" name="btnradio" value="Classics" id="btnradio4" autocomplete="off">
       <label class="btn btn-outline-success btn-sm" for="btnradio4">Classics</label>
 
-      <input type="radio" class="btn-check" name="btnradio" id="btnradio5" autocomplete="off">
+      <input type="radio" class="btn-check" name="btnradio" value="Historical Fiction" id="btnradio5" autocomplete="off">
       <label class="btn btn-outline-success btn-sm" for="btnradio5">Historical Fiction</label>
 
-      <input type="radio" class="btn-check" name="btnradio" id="btnradio6" autocomplete="off">
+      <input type="radio" class="btn-check" name="btnradio" value="Childrens" id="btnradio6" autocomplete="off">
       <label class="btn btn-outline-success btn-sm" for="btnradio6">Childrens</label>
 
-      <input type="radio" class="btn-check" name="btnradio" id="btnradio7" autocomplete="off">
+      <input type="radio" class="btn-check" name="btnradio" value="Fiction" id="btnradio7" autocomplete="off">
       <label class="btn btn-outline-success btn-sm" for="btnradio7">Fiction</label>
 
-      <input type="radio" class="btn-check" name="btnradio" id="btnradio8" autocomplete="off">
+      <input type="radio" class="btn-check" name="btnradio" value="Science Fiction" id="btnradio8" autocomplete="off">
       <label class="btn btn-outline-success btn-sm" for="btnradio8">Science Fiction</label>
 
-      <input type="radio" class="btn-check" name="btnradio" id="btnradio9" autocomplete="off">
+      <input type="radio" class="btn-check" name="btnradio" value="Horror" id="btnradio9" autocomplete="off">
       <label class="btn btn-outline-success btn-sm" for="btnradio9">Horror</label>
 
-      <input type="radio" class="btn-check" name="btnradio" id="btnradio10" autocomplete="off">
+      <input type="radio" class="btn-check" name="btnradio" value="Nonfiction" id="btnradio10" autocomplete="off">
       <label class="btn btn-outline-success btn-sm" for="btnradio10">Nonfiction</label>
 
-      <input type="radio" class="btn-check" name="btnradio" id="btnradio11" autocomplete="off">
+      <input type="radio" class="btn-check" name="btnradio" value="Romance" id="btnradio11" autocomplete="off">
       <label class="btn btn-outline-success btn-sm" for="btnradio11">Romance</label>
 
-      <input type="radio" class="btn-check" name="btnradio" id="btnradio12" autocomplete="off">
+      <input type="radio" class="btn-check" name="btnradio" value="Mystery" id="btnradio12" autocomplete="off">
       <label class="btn btn-outline-success btn-sm" for="btnradio12">Mystery</label>
 
-      <input type="radio" class="btn-check" name="btnradio" id="btnradio13" autocomplete="off">
+      <input type="radio" class="btn-check" name="btnradio" value="Picture Books" id="btnradio13" autocomplete="off">
       <label class="btn btn-outline-success btn-sm" for="btnradio13">Picture Books</label>
     </div>
   </div>
 
   <br>
-  {% comment %} border border-light-subtle rounded {% endcomment %}
   <div class="container">
     <div class="container">
-      <div class="row row-cols-1 row-cols-md-3 g-4">
-          {% for book in books %}
-          <div class="col">
-            <div class="card h-100 mb-3" style="max-width: 540px;">
-              <div class="row g-0">
-                <div class="col-md-4">
-                  <img src="{{book.cover_img}}" class="flex-fill img-fluid rounded-start" alt="...">
-                </div>
-                <div class="col-md-8">
-                  <div class="card-body">
-                    <h5 class="card-title fw-bold"> {{book.title}} </h5>
-                    <p class="card-text"> {{book.author}}</p>
-                    <p class="card-text"> {{book.genres}}</p>
-                    <button type="button" class="btn btn-success"><i class="bi bi-plus-square"></i></button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% endfor %}
+      <div class="row row-cols-2 row-cols-md-4 g-4" id="buku">
       </div>
+    </div>
   </div>
-  </div>
+
+  <script>
+    async function getBooks() {
+      return fetch("{% url 'main:get_book_json' %}").then((res) => res.json());
+    }
+
+    // Fungsi untuk menampilkan buku berdasarkan genre
+    async function filterBooksByGenre(genre) {
+      document.getElementById("buku").innerHTML = ``;
+      const books = await getBooks();
+      let htmlString = ``;
+
+      books.forEach((book) => {
+        if (genre === 'All' || book.fields.genres.toLowerCase() === genre.toLowerCase()) {
+          htmlString +=
+          `
+          <div class="col"\>
+            <div class="card h-100" data-genre="${book.fields.genres}"\>
+              <img src= ${book.fields.cover_img} class="card-img-top"\>
+              <div class="card-body"\>
+                <h5 class="card-title fw-bold"> ${book.fields.title} </h5\>
+                <p class="card-text"><small class="text-body-secondary"> ${book.fields.author} </small></p\>
+                <p class="card-text"><small class="text-body-success border border-success rounded p-1"> ${book.fields.genres} </small></p\>
+              </div\>
+              <a href="#" class="stretched-link"></a>
+            </div\>
+          </div\>`;
+        }
+      });
+      
+      document.getElementById("buku").innerHTML = htmlString;
+    }
+
+    filterBooksByGenre("All");
   
+    // Fungsi untuk menampilkan buku berdasarkan judul
+    async function filterBooksByTitle(title) {
+      document.getElementById("buku").innerHTML = ``;
+      const books = await getBooks();
+      let htmlString = ``;
+
+      books.forEach((book) => {
+        if (book.fields.title.toLowerCase().includes(title.toLowerCase())) {
+          htmlString +=
+          `
+          <div class="col"\>
+            <div class="card h-100" data-genre="${book.fields.genres}"\>
+              <img src= ${book.fields.cover_img} class="card-img-top"\>
+              <div class="card-body"\>
+                <h5 class="card-title fw-bold"> ${book.fields.title} </h5\>
+                <p class="card-text"><small class="text-body-secondary"> ${book.fields.author} </small></p\>
+                <p class="card-text"><small class="text-body-success border border-success rounded p-1"> ${book.fields.genres} </small></p\>
+              </div\>
+            </div\>
+          </div\>`;
+        }
+      });
+      
+      document.getElementById("buku").innerHTML = htmlString;
+    }
+  
+    // Event listener untuk tombol genre
+    const genreButtons = document.querySelectorAll('.btn-check');
+    genreButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const selectedGenre = button.value;
+        filterBooksByGenre(selectedGenre);
+      });
+    });
+  
+    // Event listener untuk tombol cari
+    const searchButton = document.getElementById('find-button');
+    searchButton.addEventListener('click', () => {
+      const searchInput = document.getElementById('find-text').value;
+      filterBooksByTitle(searchInput);
+    });
+  </script>
 {% endblock %}

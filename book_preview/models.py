@@ -1,22 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
+from main.models import Book
+from django.conf import settings
 
-# Create your models here.
-# class Genre(models.Model):
-#     genre = models.CharField(max_length=255)
+class Comment(models.Model):
+  komentar    = models.TextField(null=True)
+  buku        = models.ForeignKey(Book, on_delete=models.CASCADE)
+  user        = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
-# class Book(models.Model):
-    # title = models.CharField(max_length=255)
-    # author = models.CharField(max_length=255)
-    # description = models.TextField()
-    # isbn = models.CharField(max_length=13, unique=True) 
-    # genres = models.ManyToManyField(Genre)
-    # publishDate = models.DateField()
-    # coverImg = models.TextField()
-
-    # def __str__(self):
-    #     return self.title
-    
+class RatedBook(models.Model):
+  user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+  book = models.ForeignKey(Book, on_delete=models.CASCADE)
 
 
 

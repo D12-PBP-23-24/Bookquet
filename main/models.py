@@ -1,13 +1,8 @@
 from django.db import models
+from django.conf import settings
 import random
 from django.contrib.auth.models import User
 
-
-
-
-class Rate(models.Model):
-   average_rate = models.FloatField()
-   user_rated = models.IntegerField()
 
 class Book(models.Model):
   title       = models.CharField(null=True, blank=True, max_length=255)
@@ -17,21 +12,14 @@ class Book(models.Model):
   genres      = models.TextField(null=True, blank=True)
   cover_img   = models.TextField(null=True, blank=True)
   year        = models.IntegerField(null=True, blank=True)
-  rate        = models.ForeignKey(Rate, on_delete=models.CASCADE)
+  average_rate= models.FloatField(null=True, blank=True)
+  user_rated  = models.IntegerField(null=True, blank=True)
 
 class UserProfile(User):
     nickname = models.TextField(null=True, blank=True)
     phone = models.IntegerField()
     age = models.IntegerField()
     region = models.TextField()
-    rated_books = models.ManyToManyField(Book, related_name="rated_books")
-    read_later_books = models.ManyToManyField(Book, related_name="read_later_books")
-
-class Comment(models.Model):
-  komentar    = models.TextField(null=True)
-  buku        = models.ForeignKey(Book, on_delete=models.CASCADE)
-  user        = models.ForeignKey(User, on_delete=models.CASCADE)
-
 # print("SEEDINGGGGG")
 # comment_cnt = 0
 # for i in range(100):
