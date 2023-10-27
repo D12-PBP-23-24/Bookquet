@@ -12,6 +12,7 @@ class RatedBook(models.Model):
   user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
   book = models.ForeignKey(Book, on_delete=models.CASCADE)
 
-
-
-
+class Rate(models.Model):
+  rating    = models.IntegerField()
+  buku        = models.ForeignKey(Book, on_delete=models.CASCADE)
+  user        = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

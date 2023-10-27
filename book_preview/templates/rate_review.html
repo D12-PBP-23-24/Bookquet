@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  /* Add your CSS styles for the star rating here */
+  .star-rating img {
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+  }
+</style>
+
+<div class="d-flex flex-column">
+  <h2>Rate {{ book.title }}</h2>
+
+  <form id="rating-comment-form">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="komentar">Comment:</label>
+      <textarea id="comment" name="comment" class="form-control"></textarea>
+    </div>
+
+    <div class="star-rating" data-rating="0" for="rating">
+      <img src="{% static 'images/empty-star.png' %}" alt="Empty Star" data-rating="1">
+      <img src="{% static 'images/empty-star.png' %}" alt="Empty Star" data-rating="2">
+      <img src="{% static 'images/empty-star.png' %}" alt="Empty Star" data-rating="3">
+      <img src="{% static 'images/empty-star.png' %}" alt="Empty Star" data-rating="4">
+      <img src="{% static 'images/empty-star.png' %}" alt="Empty Star" data-rating="5">
+    </div>
+
+    <button type="button" onclick="submitRatingCommentAjax()">Add Rating & Comment</button>
+</form>
+</div>
+<button type="button" onclick="showSelectedRating()">Show Selected Rating</button>
+
+<script>
+  var selectedRating = 0;
+
+  function updateStarRating() {
+    var rating = parseInt(selectedRating);
+    var stars = document.querySelectorAll('.star-rating img');
+    stars.forEach(function (star, index) {
+      if (index < rating) {
+        star.src = "{% static 'images/filled-star.png' %}";
+      } else {
+        star.src = "{% static 'images/empty-star.png' %}";
+      }
+    });
+  }
+
+  document.querySelectorAll('.star-rating img').forEach(function (star) {
+    star.addEventListener('click', function () {
+      selectedRating = star.getAttribute('data-rating');
+      updateStarRating();
+    });
+  });
+
+  function showSelectedRating() {
+    alert('Selected Rating: ' + selectedRating);
+  }
+
+  function submitRatingCommentAjax() {
+    var commentText = document.getElementById('comment').value;
+
+    var starRating = selectedRating;
+
+
+    var formData = new FormData();
+    formData.append('komentar', commentText);
+    formData.append('rating', starRating);
+
+    fetch("{% url 'book_preview:add_rating_comment' book.id %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Rating and comment added successfully.');
+        } else {
+            alert('Failed to add rating and comment: ' + data.error);
+        }
+    });
+}
+
+</script>
+
+{% endblock content %}

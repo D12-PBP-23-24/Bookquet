@@ -27,34 +27,35 @@
         </text>
        
         <section>
-            <img src="{% static 'images/star.png' %}" style="width: 40px; height: 40px;"></img>
-            <img src="{% static 'images/star.png' %}" style="width: 40px; height: 40px;"></img>
-            <img src="{% static 'images/star.png' %}" style="width: 40px; height: 40px;"></img>
-            <img src="{% static 'images/star.png' %}" style="width: 40px; height: 40px;"></img>
-            <img src="{% static 'images/star.png' %}" style="width: 40px; height: 40px;"></img>
+            <img src="{% static 'images/filled-star.png' %}" style="width: 40px; height: 40px;"></img>
+            <img src="{% static 'images/filled-star.png' %}" style="width: 40px; height: 40px;"></img>
+            <img src="{% static 'images/filled-star.png' %}" style="width: 40px; height: 40px;"></img>
+            <img src="{% static 'images/filled-star.png' %}" style="width: 40px; height: 40px;"></img>
+            <img src="{% static 'images/filled-star.png' %}" style="width: 40px; height: 40px;"></img>
+            <span>{{book.average_rate}}</span>
+            <span>({{book.user_rate|default:0}})</span>
         </section>
        
 
     <p>{{book.description}}</p>
 
+
+    <section>
+        <a href="{% url 'book_preview:add_rating_comment' book.pk %}">
+            <button>
+                Rate & Review
+            </button>
+        </a>
+    </section>
+    
+
     </div>
-
-    <img src="{{book.cover_img}}" class="w-5"></img>
-
-
-</div>
+        <img src="{{book.cover_img}}" class="w-5"></img>
+    </div>
 
 <div class="container d-flex flex-row" style="padding: 50px 0px; gap: 40px;">
     <section>
-        <h1>Beri Ulasan pada Bookquet ini</h1>
-        <form method="/POST" class="d-flex flex-column">
-            <label></label>
-
-            <label>Komentar:</label>
-            <textarea></textarea>
-
-            <button onclick="onsubmit">Kirim</button>
-        </form>
+        {{rate|length}}
 
     </section>
 
