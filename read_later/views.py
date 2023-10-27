@@ -14,48 +14,10 @@ from django.urls import reverse
 from django.contrib import messages  
 import json
 
-# def all_list(request):
-#     books = Book.objects.all()
-#     return render(request, 'list.html', {"books":books})
-
-# def read_later_list(request):
-#     entries = ReadLaterBooks.objects.all()
-#     return render(request, 'read_later_list.html', {'entries': entries})
-
-# def add_to_read_later(request, book_id):
-#     book = get_object_or_404(Book, id=book_id)
-#     ReadLaterBooks.objects.get_or_create(book=book)
-#     print(ReadLaterBooks.id)
-#     print(ReadLaterBooks.objects.count())
-#     return redirect('read_later:read_later_list')
-
-# def remove_from_read_later(request, read_later_id):
-#     read_later_entry = get_object_or_404(ReadLaterBooks, id=read_later_id)
-#     read_later_entry.delete()
-#     return redirect('read_later:read_later_list')
-
-
 @login_required
 def all_list(request):
     books = Book.objects.all()
     return render(request, 'list.html', {"books":books})
-
-# @login_required
-# def read_later_list(request):
-#     print("fa")
-#     entries = ReadLaterBooks.objects.filter(user=request.user)
-#     return render(request, 'read_later_list.html', {'entries': entries})
-#     # return HttpResponse(serializers.serialize('json', entries))
-
-# @login_required
-# def read_later_list2(request,priority = "all"):
-#     print("faf")
-#     if(priority == "all"):
-#         entries = ReadLaterBooks.objects.filter(user=request.user)
-#     else:
-#         entries = ReadLaterBooks.objects.filter(user=request.user).filter(priority = priority)
-#     return render(request, 'read_later_list.html', {'entries': entries})
-#     # return HttpResponse(serializers.serialize('json', entries))
 
 @login_required
 def read_later_list_json(request):
@@ -115,17 +77,6 @@ def add_to_read_later(request, book_id):
     }
     return render(request, 'add_to_read_later_form.html', context)
 
-# @login_required
-# def remove_from_read_later(request, entry_id):
-#     # Retrieve the relevant entry
-#     entry = get_object_or_404(ReadLaterBooks, id=entry_id, user=request.user)
-
-#     # Delete the entry
-#     entry.delete()
-
-#     # Redirect back to the read later list
-#     return HttpResponseRedirect(reverse('read_later:read_later_list', args=('all',)))
-
 @csrf_exempt
 @login_required
 def delete_item_ajax(request, item_id):
@@ -133,15 +84,6 @@ def delete_item_ajax(request, item_id):
         item = ReadLaterBooks.objects.get(id=item_id)
         item.delete()
         return HttpResponse({'status': 'DELETED'}, status=200)
-    
-# @login_required
-# def remove_from_read_later(request, read_later_id):
-#     read_later_entry = get_object_or_404(ReadLaterBooks, id=read_later_id)
-#     if read_later_entry.user != request.user:
-#         return JsonResponse({'success': False, 'message': 'Permission Denied'})
-
-#     read_later_entry.delete()
-#     return JsonResponse({'success': True})
 
 
 def register(request):
