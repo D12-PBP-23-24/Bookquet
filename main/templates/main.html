@@ -58,6 +58,9 @@
           <cite title="Source Title">J.K. Rowling</cite>
         </figcaption>
       </figure>
+      {% if user.is_authenticated %}
+        <p class="display-6 text-center fw-bold"> Selamat datang {{ name }}! 👋🏻 </p>
+      {% endif %}
     </div>
   </header>
 
@@ -87,7 +90,9 @@
                 <p class="card-text"><small class="text-body-success border border-success rounded p-1"> {{ book.genres }} </small></p>
               </div>
               <a href="#" class="stretched-link"></a>
-              <div class="card-footer text-muted"> <i class="bi bi-bookmark-plus"></i> Read Later </div>
+              {% if user.is_authenticated %}
+                <div class="card-footer text-muted"> <i class="bi bi-bookmark-plus"></i> Read Later </div>
+              {% endif %}
             </div>
           </div>
         {% endfor %}
@@ -165,7 +170,9 @@
                             <p class="card-text"><small class="text-body-success border border-success rounded p-1">${book.genres}</small></p>
                         </div>
                         <a href="#" class="stretched-link"></a>
-                        <div class="card-footer text-muted"> <i class="bi bi-bookmark-plus"></i> Read Later </div>
+                        {% if user.is_authenticated %}
+                          <div class="card-footer text-muted"> <i class="bi bi-bookmark-plus"></i> Read Later </div>
+                        {% endif %}
                     </div>
                 `;
                 bukuDiv.appendChild(card);
@@ -179,6 +186,12 @@
     document.getElementById("button_add").addEventListener('click', function (event) {
         event.preventDefault(); // Prevent default form submission
         searchBook(); // Call the searchBook function
+    });
+
+    document.getElementById("form").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault(); // Prevent the default form submission action
+      }
     });
   </script>
 
