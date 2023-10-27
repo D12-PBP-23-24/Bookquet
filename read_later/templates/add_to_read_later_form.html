@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Add "{{ book.title }}" to Read Later</h2>
+
+
+<form id="readLaterForm">
+    {% csrf_token %}
+    <label for="priority">Priority: </label>
+    {{ form.priority }}
+    <button type="button" onclick="submitFormAjax()">Add to Read Later</button>
+</form>
+
+<script>
+    function submitFormAjax() {
+        const form = document.getElementById("readLaterForm");
+        const formData = new FormData(form);
+
+        fetch("{% url 'read_later:add_to_read_later' book.id %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Book added to Read Later list!');
+                window.location.href = data.redirect_url;
+            } else {
+                // Handle error
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+{% endblock %}

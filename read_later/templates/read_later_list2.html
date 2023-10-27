@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Your read later list</h2>
+
+    <div class="btn-group" role="group" aria-label="Priority Filter">
+        <div class="btn-group" role="group" aria-label="Priority Filter">
+            <a href="#" onclick="refreshProducts('all'); return false;" class="btn btn-secondary">All</a>
+            <a href="#" onclick="refreshProducts('low'); return false;" class="btn btn-secondary">Low</a>
+            <a href="#" onclick="refreshProducts('medium'); return false;" class="btn btn-secondary">Medium</a>
+            <a href="#" onclick="refreshProducts('high'); return false;" class="btn btn-secondary">High</a>
+        </div>
+    </div>
+    
+    <div class="row" id="item_card"> 
+        {% for entry in entries %}
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card">
+                <img src="{{entry.book.cover_img}}" class="card-img-top" alt="{{ entry.book.title }}" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ entry.book.title }}</h5>
+                    <p class="card-text">{{ entry.book.author }}</p>
+                    <data-id="${item.pk}" onclick="deleteItem(this.getAttribute('data-id'))" class="btn btn-danger">Remove from Read Later</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<script>
+    let currentPriority = "all";
+    async function getItem(priority) {
+        return fetch("{% url 'read_later:read_later_list_json' %}?priority=" + priority).then((res) => res.json());
+    }
+
+    async function refreshProducts(priority = "all") { // "all" is the default value
+        currentPriority = priority; // update currentPriority
+         document.getElementById("item_card").innerHTML = "";
+        const items = await getItem(priority);
+        
+        items.forEach((item) => {
+            let cardHTML = `
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="card">
+                    <img src="${item.cover_img}" class="card-img-top" alt="${item.title}" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">${item.title}</h5>
+                        <p class="card-text">${item.author}</p>
+                        <button onclick="deleteItem(${item.id});" class="btn btn-danger">Remove from Read Later</button>
+                    </div>
+                </div>
+            </div>`;
+            
+            document.getElementById("item_card").innerHTML += cardHTML;
+        });
+    }
+
+    refreshProducts('all');
+
+    async function deleteItem(itemId) {
+        const deleteUrl = `{% url 'read_later:delete_item_ajax' item_id='999' %}`.replace('999', itemId);
+        try {
+            const response = await fetch(deleteUrl, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+
+            if (response.ok) {
+                refreshProducts(currentPriority); // Refresh products after deletion
+            } else {
+                console.error('Failed to delete product. Server responded with:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+}
+</script>
+
+{% endblock %}
