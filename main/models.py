@@ -1,4 +1,6 @@
 from django.db import models
+from django.conf import settings
+import random
 from django.contrib.auth.models import User
 
 class Book(models.Model):
@@ -9,7 +11,14 @@ class Book(models.Model):
   genres      = models.TextField(null=True, blank=True)
   cover_img   = models.TextField(null=True, blank=True)
   year        = models.IntegerField(null=True, blank=True)
-  rate        = models.IntegerField()
+  average_rate= models.FloatField(null=True, blank=True)
+  user_rated  = models.IntegerField(null=True, blank=True)
 
-class Review(models.Model):
-  review = models.ForeignKey(Book, on_delete=models.CASCADE)
+class UserProfile(User):
+    nickname = models.TextField(null=True, blank=True)
+    phone = models.IntegerField()
+    age = models.IntegerField()
+    region = models.TextField()
+
+# class Review(models.Model):
+#   review = models.ForeignKey(Book, on_delete=models.CASCADE)
