@@ -89,9 +89,10 @@
                 <p class="card-text"><small class="text-body-secondary"> {{ book.author }} </small></p>
                 <p class="card-text"><small class="text-body-success border border-success rounded p-1"> {{ book.genres }} </small></p>
               </div>
-              <a href="#" class="stretched-link"></a>
+              <!-- <a href="#" class="stretched-link"></a> -->
+
               {% if user.is_authenticated %}
-                <div class="card-footer text-muted"> <i class="bi bi-bookmark-plus"></i> Read Later </div>
+                <div class="card-footer text-muted"> <a class = "btn btn-secondary" href='read-later/add-to-read-later/{{book.id}}/'> <i class="bi bi-bookmark-plus"> </i> Read Later </a> </div> 
               {% endif %}
             </div>
           </div>
