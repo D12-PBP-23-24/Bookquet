@@ -13,3 +13,4 @@ class Profile(User):
     phone = models.IntegerField()
     age = models.IntegerField()
     region = models.TextField()
+    

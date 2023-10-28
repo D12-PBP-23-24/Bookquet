@@ -6,7 +6,7 @@
     .hero-container {
         display: flex;
         flex-direction: column;
-        height: 30vh;
+        height: 40vh;
         background-color: #defff2;
     }
 
@@ -27,7 +27,7 @@
                     <span class="fw-bold">Nickname : </span> <span id="nickname">{{profile.nickname}}</span>
                 </li>
                 <li class="list-group-item">
-                    <span class="fw-bold">Username : </span> <span id="Username">{{profile.username}}</span>
+                    <span class="fw-bold">Username : </span> <span id="username">{{username}}</span>
                 </li>
                 <li class="list-group-item">
                     <span class="fw-bold">Age : </span> <span id="age">{{profile.age}}</span>
@@ -44,21 +44,18 @@
 </div>
 
 
-
-<div class="hero-container">
-    <div class="profile-header">
-        <h1 class="display-4">User Profile</h1>
-    </div>
-    <div class="d-flex align-items-center justify-content-center">
-        <div class="container text-center" id="information"></div>
-    </div>
+<div class="justify-content-center">
+    <div class="container text-center" id="information"></div>
+</div>
+<div class="text-center" style="margin-top: 200px;">
     <button type="button" class="btn btn-success" id="editProfileButton">
         Edit Profile
     </button>
-    <br>
-    <h3 class="container text-center">Buku yang sudah di review : </h3>
-
 </div>
+<br>
+
+<h3 class="container text-center">Buku yang sudah di review : </h3>
+
 
 
 <div class="modal" id="ProfileModal">
@@ -72,24 +69,24 @@
                 <form id="form">
                     {% csrf_token %}
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="nickname" placeholder="name">
-                        <label for="nickname">Nickname</label>
+                        <input type="text" class="form-control" id="editnickname" value="{{ profile.nickname }}">
+                        <label for="editnickname">Nickname</label>
                       </div>
                       <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="username" placeholder="username">
-                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="editusername" value="{{ profile.username }}">
+                        <label for="editusername">Username</label>
                       </div>
                       <div class="form-floating mb-3">
-                        <input type="number" class="form-control" id="age" placeholder="age">
-                        <label for="age">Age</label>
+                        <input type="number" class="form-control" id="editage" value="{{ profile.age }}">
+                        <label for="editage">Age</label>
                       </div>
                     <div class="form-floating mb-3">
-                        <input type="number" class="form-control" id="phone" placeholder="phone number">
-                        <label for="phone">Phone Number</label>
+                        <input type="number" class="form-control" id="editphone" value="{{ profile.phone }}">
+                        <label for="editphone">Phone Number</label>
                       </div>
                      <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="region" placeholder="region">
-                        <label for="region">Region</label>
+                        <input type="text" class="form-control" id="editregion" value="{{ profile.region }}">
+                        <label for="editregion">Region</label>
                       </div>
                 </form>
             </div>
@@ -110,66 +107,46 @@
     }
 
     async function refreshProfile() {
-        document.getElementById("information").innerHTML = ""
-        const profile = await getProfile()
-        let htmlString =  ``
-        profile.forEach((prof) => {
-        htmlString += `
+        const profile = await getProfile();
+        const informationContainer = document.getElementById("information");
+        informationContainer.innerHTML = "";
+
+        const htmlString = `
             <div class="container text-center">
                 <ul class="list-group mb-4">
                     <li class="list-group-item">
-                        <span class="fw-bold" id="nickname">${prof.field.nickname}</span> 
+                        <span class="fw-bold">Nickname : </span> <span id="nickname">${profile.nickname}</span> 
                     </li>
                     <li class="list-group-item">
-                        <span class="fw-bold" id="username">${prof.field.username}</span>
+                        <span class="fw-bold">Username : </span> <span id="username">${profile.username}</span>
                     </li>
                     <li class="list-group-item">
-                        <span class="fw-bold" id="age">${prof.field.age}</span>
+                        <span class="fw-bold">Age : </span> <span id="age">${profile.age}</span>
                     </li>
                     <li class="list-group-item">
-                        <span class="fw-bold" id="phone">${prof.field.phone}</span>
+                        <span class="fw-bold">Phone Number : </span> <span id="phone">${profile.phone}</span>
                     </li>
                     <li class="list-group-item">
-                        <span class="fw-bold" id="region">${prof.field.region}</span>
+                        <span class="fw-bold">Region : </span> <span id="region">${profile.region}</span>
                     </li>
                 </ul>
             </div>`;
 
-        document.getElementById("information").innerHTML = htmlString
-    })
+        informationContainer.innerHTML = htmlString;
     }
+
     refreshProfile()
 
-
-    // async function refreshProfile() {
-    //     document.getElementById("information").innerHTML = ""
-    //     const profile = await getProfile()
-    //     let htmlString = `<tr>
-    //         <th>nickname</th>
-    //         <th>username</th>
-    //         <th>age</th>
-    //         <th>phone</th>
-    //         <th>region</th>
-    //     </tr>`
-    //     profile.forEach((prof) => {
-    //         htmlString += `\n<tr>
-    //         <td>${prof.field.nickname}</td>
-    //         <td>${prof.field.username}</td>
-    //         <td>${prof.field.age}</td>
-    //         <td>${prof.field.phone}</td>
-    //         <td>${prof.field.region}</td>
-    //     </tr>` 
-    //     })
-        
-    //     document.getElementById("information").innerHTML = htmlString
-    // }
-
-    // refreshProfile()
-
-
-
     async function editProfile() {
-        fetch("{% url 'dashboard:edit_profile_ajax' %} %}", {
+        const ageInput = document.getElementById("editage");
+        const phoneInput = document.getElementById("editphone");
+
+        if (!/^\d+$/.test(ageInput.value) || !/^\d+$/.test(phoneInput.value)) {
+            alert("Age and Phone Number must be numbers");
+            return;
+        }
+        
+        fetch("{% url 'dashboard:edit_profile_ajax' %}", {
             method: "POST",
             body: new FormData(document.querySelector('#form'))
         }).then(() => {
@@ -182,6 +159,7 @@
 
 
     document.getElementById("button_edit").onclick = editProfile;
+
 
     document.getElementById("editProfileButton").onclick = function () {
         refreshProfile();
@@ -196,7 +174,6 @@
         document.getElementById("form").reset();
     });
 
-    // getProfile();
     refreshProfile();
 </script>
 {% endblock content %}

@@ -9,7 +9,8 @@ class Book(models.Model):
   genres      = models.TextField(null=True, blank=True)
   cover_img   = models.TextField(null=True, blank=True)
   year        = models.IntegerField(null=True, blank=True)
-  rate        = models.IntegerField()
+  average_rate= models.FloatField(null=True, blank=True)
+  user_rated  = models.IntegerField(null=True, blank=True)
 
 class Review(models.Model):
   review = models.ForeignKey(Book, on_delete=models.CASCADE)
