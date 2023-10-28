@@ -64,7 +64,7 @@
         <p id="quote-text"></p>
         <p id="quote-author"></p>
         {% if user.is_staff %}
-          <a href="{% url 'main:edit_quote_of_the_day' %}" class="btn btn-primary">Edit</a>
+          <a href="{% url 'adminpage:edit_quote_of_the_day' %}" class="btn btn-primary">Edit</a>
         {% endif %}
       </div>
       
@@ -251,7 +251,7 @@
     });
 
     function loadQuoteOfTheDay() {
-        fetch("{% url 'main:manage_quote_of_the_day' %}")
+        fetch("{% url 'adminpage:manage_quote_of_the_day' %}")
             .then(response => response.json())
             .then(data => {
                 // Perbarui tampilan dengan kutipan dan penulis

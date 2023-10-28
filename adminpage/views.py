@@ -1,93 +1,77 @@
-# from django.shortcuts import render
-# from django.core import serializers
-# from django.http import HttpResponse, HttpResponseNotFound
-# from django.http import HttpResponseRedirect
-# from adminpage.forms import BookForm
-# from django.urls import reverse
-# from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts               import render, redirect
+from django.http                    import JsonResponse
+from django.views.decorators.csrf   import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
-# from main.models import Book
+from main.models        import Book, UserProfile
+from main.forms         import UserProfileForm, AddBookForm
+from .models            import QuoteOfDay
+from .forms             import QuoteOfDayForm
 
-# def show_main(request):
-#     books = Book.objects.all()
-#     context = {
-#         'books': books, 
-#     }
-#     return render(request, "main.html", context)
+def show_main(request):
+    form = AddBookForm(request.POST or None)
+    books = Book.objects.all()
+    context = {
+        'books': books,
+        'form': form,
+        'name' : request.user.username,
+    }
+    return render(request, "admindash.html", context)
 
-# def add_book(request):
-#     form =  BookForm(request.POST or None)
+@login_required
+def manage_quote_of_the_day(request):
+    quote = QuoteOfDay.objects.first()
+    if request.method == 'POST':
+        form = QuoteOfDayForm(request.POST, instance=quote)
+        if form.is_valid():
+            form.save()
+    else:
+        form = QuoteOfDayForm(instance=quote)
 
-#     if form.is_valid() and request.method == "POST":
-#         form.save()
-#         return HttpResponseRedirect(reverse('main:show_main'))
-#     context = {'form': form}
-#     return render(request, "add_book.html", context)
+    return render(request, 'manage_quote.html', {'form': form})
 
-# def show_xml(request):
-#     data = Book.objects.all()
-#     return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+@login_required
+def edit_quote_of_the_day(request):
+    # Ambil objek Quote of the Day yang ada
+    quote_of_the_day = QuoteOfDay.objects.first()
 
-# def show_json(request):
-#     data = Book.objects.all()
-#     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+    if not request.user.is_staff:
+        return redirect('adminpage:show_main')  # Redirect jika bukan admin
 
-# def show_xml_by_id(request, id):
-#     data = Book.objects.filter(pk=id)
-#     return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+    if request.method == 'POST':
+        form = QuoteOfDayForm(request.POST, instance=quote_of_the_day)
+        if form.is_valid():
+            form.save()
+            return redirect('adminpage:show_main') 
+    else:
+        form = QuoteOfDayForm(instance=quote_of_the_day)
 
-# def show_json_by_id(request, id):
-#     data = Book.objects.filter(pk=id)
-#     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+    context = {'form': form, 'quote_of_the_day': quote_of_the_day}
+    return render(request, 'edit_quote.html', context)
 
-# def edit_book(request, id):
-#     # Get product berdasarkan ID
-#     books = Book.objects.get(pk = id)
+@csrf_exempt
+def get_profile_json(request):
+    profile = UserProfile.objects.get(user=request.user)
+    profile_data = {
+        'nickname': profile.nickname,
+        'username': profile.username,
+        'age': profile.age,
+        'phonenumber': profile.phone,
+        'region': profile.region,
+    }
+    return JsonResponse(profile_data)
 
-#     # Set product sebagai instance dari form
-#     form = BookForm(request.POST or None, instance=books)
-
-#     if form.is_valid() and request.method == "POST":
-#         # Simpan form dan kembali ke halaman awal
-#         form.save()
-#         return HttpResponseRedirect(reverse('main:show_main'))
-
-#     context = {'form': form}
-#     return render(request, "edit_book.html", context)
-
-# def delete_book(request, id):
-#     # Get data berdasarkan ID
-#     books = Book.objects.get(pk = id)
-#     # Hapus data
-#     books.delete()
-#     # Kembali ke halaman awal
-#     return HttpResponseRedirect(reverse('main:show_main'))
-
-# def get_book_json(request):
-#     data = Book.objects.all()
-#     return HttpResponse(serializers.serialize("json", data))
-
-# def get_books(request):
-#     data = Book.objects.all()
-#     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
-
-# @csrf_exempt
-# def add_book_ajax(request):
-#     if request.method == 'POST':
-#         title = request.POST.get("title")
-#         author = request.POST.get("author")
-#         description = request.POST.get("description")
-#         isbn = request.POST.get("isbn")
-#         genres = request.POST.get("genres")
-#         cover_img = request.POST.get("cover_img")
-#         year = request.POST.get("year")
-#         average_rate = request.POST.get("average_rate")
-#         user_rated = request.POST.get("user_rated")
-#         user = request.user
-
-#         new_book = Book(title=title, author=author, description=description, isbn=isbn, genres=genres, cover_img=cover_img, year=year, average_rate=average_rate, user_rated=user_rated, user=user)
-#         new_book.save()
-
-#         return HttpResponse(b"CREATED", status=201)
-
-#     return HttpResponseNotFound()
+@csrf_exempt
+def edit_profile_ajax(request):
+    user = request.user  #ambil objek pengguna yang ingin diedit
+    profile = UserProfile.objects.get(user=user)
+    
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=profile)  #isi formulir dengan data profil pengguna
+        if form.is_valid():
+            form.save() 
+            return JsonResponse({'message': 'Profile updated successfully'})
+        else:
+            errors = form.errors
+            return JsonResponse(errors, status=400)
+        

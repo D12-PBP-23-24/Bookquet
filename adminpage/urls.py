@@ -1,19 +1,15 @@
 from django.urls import path
-from adminpage.views import show_main, add_book, edit_book, delete_book
-from adminpage.views import show_xml, show_json, show_xml_by_id, show_json_by_id, add_book_ajax
-from adminpage.views import get_book_json, get_books
+from adminpage.views import show_main, get_profile_json, edit_profile_ajax
+from . import views
 
 app_name = 'adminpage'
 
 urlpatterns = [
-    path('add-book', add_book, name='add_book'),
-    path('xml/', show_xml, name='show_xml'), 
-    path('json/', show_json, name='show_json'), 
-    path('xml/<int:id>/', show_xml_by_id, name='show_xml_by_id'),
-    path('json/<int:id>/', show_json_by_id, name='show_json_by_id'), 
-    path('edit-book/<int:id>', edit_book, name='edit_book'),
-    path('delete/<int:id>', delete_book, name='delete_book'),
-    path("get-book", get_book_json, name="get_book_json"),
-    path('add-book-ajax/', add_book_ajax, name='add_book_ajax'),
-    path("api/books", get_books, name="get_books")
+    path("", show_main, name='show_main'),
+    path('manage_quote_of_the_day/', views.manage_quote_of_the_day, name='manage_quote_of_the_day'),
+    path('edit_quote_of_the_day/', views.edit_quote_of_the_day, name='edit_quote_of_the_day'),
+    path('get_profile_json/', get_profile_json, name='get_profile_json'),
+    path('edit_profile_ajax/', edit_profile_ajax, name='edit_profile_ajax'),
 ]
+
+
