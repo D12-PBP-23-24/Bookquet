@@ -14,11 +14,6 @@ from django.urls import reverse
 from django.contrib import messages  
 import json
 
-# @login_required
-# def all_list(request):
-#     books = Book.objects.all()
-#     return render(request, 'list.html', {"books":books})
-
 @login_required
 def read_later_list_json(request):
     priority = request.GET.get("priority", "all")
