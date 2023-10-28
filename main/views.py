@@ -5,12 +5,16 @@ from django.urls                    import reverse
 from django.contrib                 import messages
 from django.contrib.auth            import authenticate, login, logout
 from django.views.decorators.csrf   import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 import json
 import datetime
 
-from main.models import Book
-from main.forms import UserProfileForm, AddBookForm
+from main.models        import Book
+from main.forms         import UserProfileForm, AddBookForm
+from read_later.views   import add_to_read_later
+from .models            import QuoteOfDay
+from .forms             import QuoteOfDayForm
 
 def show_main(request):
     form = AddBookForm(request.POST or None)
@@ -90,6 +94,7 @@ def login_user(request):
     context = {}
     return render(request, 'login.html', context)
 
+@login_required
 def logout_user(request):
     print('test')
     logout(request)
@@ -109,6 +114,41 @@ def find_book(request):
         if genre == "All":
             books = Book.objects.filter(title__icontains=title).values()
         else:
-            books = Book.objects.filter(title__icontains=title, genres=genre).values()   
+            books = Book.objects.filter(title__icontains=title, genres=genre).values()  
 
     return JsonResponse({'books': list(books)})
+
+@login_required
+def read_later_book(request, book_id):
+    return add_to_read_later(request=request, book_id=book_id)
+
+@login_required
+def manage_quote_of_the_day(request):
+    quote = QuoteOfDay.objects.first()
+    if request.method == 'POST':
+        form = QuoteOfDayForm(request.POST, instance=quote)
+        if form.is_valid():
+            form.save()
+    else:
+        form = QuoteOfDayForm(instance=quote)
+
+    return render(request, 'manage_quote.html', {'form': form})
+
+@login_required
+def edit_quote_of_the_day(request):
+    # Ambil objek Quote of the Day yang ada
+    quote_of_the_day = QuoteOfDay.objects.first()
+
+    if not request.user.is_staff:
+        return redirect('main:show_main')  # Redirect jika bukan admin
+
+    if request.method == 'POST':
+        form = QuoteOfDayForm(request.POST, instance=quote_of_the_day)
+        if form.is_valid():
+            form.save()
+            return redirect('main:show_main') 
+    else:
+        form = QuoteOfDayForm(instance=quote_of_the_day)
+
+    context = {'form': form, 'quote_of_the_day': quote_of_the_day}
+    return render(request, 'edit_quote.html', context)

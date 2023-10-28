@@ -1,18 +1,9 @@
 from django.db import models
 
-# Create your models here.
 from django.conf import settings
 from django.db import models
 from main.models import Book
 from django.contrib.auth.models import User
-
-# class ReadLaterBooks(models.Model):
-#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    
-#     class Meta:
-#         unique_together = ['user', 'book']
-
 
 class Comment(models.Model):
   komentar    = models.TextField(null=True)
