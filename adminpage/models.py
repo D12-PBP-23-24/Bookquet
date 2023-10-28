@@ -20,5 +20,5 @@
 #     age = models.IntegerField()
 
 
-# class Review(models.Model):
-#    review = models.ForeignKey(Book, on_delete=models.CASCADE)
+# # class Review(models.Model):
+# #    review = models.ForeignKey(Book, on_delete=models.CASCADE)
