@@ -5,13 +5,14 @@ from django.urls                    import reverse
 from django.contrib                 import messages
 from django.contrib.auth            import authenticate, login, logout
 from django.views.decorators.csrf   import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 import json
 import datetime
 
-from main.models import Book
-from main.forms import UserProfileForm, AddBookForm
-
+from main.models        import Book
+from main.forms         import UserProfileForm, AddBookForm
+from read_later.views   import add_to_read_later
 def show_main(request):
     form = AddBookForm(request.POST or None)
     books = Book.objects.all()
@@ -56,6 +57,7 @@ def login_user(request):
     context = {}
     return render(request, 'login.html', context)
 
+@login_required
 def logout_user(request):
     print('test')
     logout(request)
@@ -75,6 +77,10 @@ def find_book(request):
         if genre == "All":
             books = Book.objects.filter(title__icontains=title).values()
         else:
-            books = Book.objects.filter(title__icontains=title, genres=genre).values()   
+            books = Book.objects.filter(title__icontains=title, genres=genre).values()  
 
     return JsonResponse({'books': list(books)})
+
+@login_required
+def read_later_book(request, book_id):
+    return add_to_read_later(request=request, book_id=book_id)
