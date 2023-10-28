@@ -17,12 +17,17 @@ from read_later.views   import add_to_read_later
 def show_main(request):
     form = AddBookForm(request.POST or None)
     books = Book.objects.all()
+
+    for book in books:
+        book.average_rate = book.average_rate // 1
+
+    status, created = SearchFeatureStatus.objects.get_or_create(id = 1)
     
     context = {
         'books'     : books,
         'form'      : form,
         'name'      : request.user.username,
-        'status'    : SearchFeatureStatus.objects.get(id = 1).enabled
+        'status'    : status.enabled
     }
 
     if request.user.is_authenticated:
@@ -37,6 +42,40 @@ def get_books(request):
 def get_book_json(request):
     data = Book.objects.all()
     return HttpResponse(serializers.serialize("json", data))
+
+def register(request):
+    form = UserProfileForm()
+
+    if request.method == "POST":
+        form = UserProfileForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been successfully created!')
+            return redirect('main:login')
+    context = {'form':form}
+    return render(request, 'register.html', context)
+
+
+def login_user(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            response = HttpResponseRedirect(reverse("main:show_main")) 
+            response.set_cookie('last_login', str(datetime.datetime.now()))
+            return response
+        else:
+            messages.info(request, 'Sorry, incorrect username or password. Please try again.')
+    context = {}
+    return render(request, 'login.html', context)
+
+def logout_user(request):
+    logout(request)
+    response = HttpResponseRedirect(reverse('main:show_main'))
+    response.delete_cookie('last_login')
+    return response
 
 def register(request):
     form = UserProfileForm()

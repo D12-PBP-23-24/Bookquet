@@ -14,3 +14,5 @@ urlpatterns = [
     path('read-later/add-to-read-later/<int:book_id>/', read_later_book, name="read_later_book"),
     path('toggle_search_feature/', toggle_search_feature, name='toggle_search_feature'),
 ]
+
+

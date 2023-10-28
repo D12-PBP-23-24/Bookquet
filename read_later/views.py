@@ -43,7 +43,9 @@ def read_later_list(request):
         entries = ReadLaterBooks.objects.filter(user=request.user)
     else:
         entries = ReadLaterBooks.objects.filter(user=request.user).filter(priority = priority)
-    return render(request, "read_later_list2.html", context={"entries": entries, "last_login": request.COOKIES['last_login']})
+
+    is_admin = request.user.is_staff
+    return render(request, "read_later_list2.html", context={"entries": entries, "is_admin": is_admin, "last_login": request.COOKIES['last_login']})
 
 @login_required
 def add_to_read_later(request, book_id):
@@ -80,5 +82,16 @@ def delete_item_ajax(request, item_id):
         item.delete()
         return HttpResponse({'status': 'DELETED'}, status=200)
 
+@csrf_exempt
+@login_required
+def adjust_priority_ajax(request, item_id):
+    if request.method == 'PUT':
+        item = ReadLaterBooks.objects.get(id=item_id)
+        if item.priority == 'low':
+            item.priority = 'medium'
+        elif item.priority == 'medium':
+            item.priority = 'high'
+        item.save()
+        return HttpResponse({'status': 'UPDATED'}, status=200)
 
 

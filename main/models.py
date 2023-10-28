@@ -1,5 +1,8 @@
 from django.db import models
+from django.conf import settings
+import random
 from django.contrib.auth.models import User
+
 
 class Book(models.Model):
   title       = models.CharField(null=True, blank=True, max_length=255)

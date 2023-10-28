@@ -45,10 +45,10 @@
                             </a>
 
                             {% comment %} Fitur Logout {% endcomment %}
-                            <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'main:logout' %}">
+                            <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'main:logout' %}" href="{% url 'main:logout' %}">
                                 <i class="bi bi-box-arrow-right"></i>
-                                {% comment %} TODO: Tambahin URL logout {% endcomment %}
                             </a>
+                            
                         {% else %}
                             {% comment %} Fitur Login {% endcomment %}
                             <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'main:login' %}">
@@ -58,7 +58,6 @@
                         {% endif %}
                     </li>
                 </ul>
-
             </div>
         </nav>
 

@@ -58,6 +58,7 @@
           <cite title="Source Title">J.K. Rowling</cite>
         </figcaption>
       </figure>
+      
       {% if user.is_authenticated %}
         <p class="display-6 text-center fw-bold"> Selamat datang {{ name }}! 👋🏻 </p>
         <p class="text-center lead"> Sesi terakhir login: {{ last_login }} </p>
@@ -103,8 +104,18 @@
         {% for book in books %}
           <div class="col">
             <div class="card h-100" data-genre="{{ book.genres }}">
-              {% comment %} TODO: tambahin link review book {% endcomment %}
-              <a href="" style="text-decoration: none; color: black;">
+              <div class="card-header d-flex justify-content-center">
+                {% with ''|center:5 as range %}
+                  {% for i in range %}  
+                      {% if forloop.counter0 < book.average_rate %}
+                        <i class="bi bi-star-fill"></i>
+                      {% else %}
+                        <i class="bi bi-star"></i>
+                      {% endif %}
+                  {% endfor %}
+                {% endwith %}
+              </div>
+              <a href="{% url 'book_preview:show_preview' book.pk %}" style="text-decoration: none; color: black;">
                 <img src= {{ book.cover_img }} class="card-img-top">
               </a>
               <div class="card-body">
@@ -112,7 +123,9 @@
                 <p class="card-text"><small class="text-body-secondary"> {{ book.author }} </small></p>
                 <p class="card-text"><small class="text-body-success border border-success rounded p-1"> {{ book.genres }} </small></p>
               </div>
-              <div class="card-footer text-muted"> <a href="{% url 'main:read_later_book' book.id %}" style="text-decoration: none; color: black;"> <i class="bi bi-bookmark-plus"></i> Read Later </a> </div>
+              {% if user.is_authenticated %}
+                <div class="card-footer text-muted"> <a href="read-later/add-to-read-later/{{ book.id }}/" style="text-decoration: none; color: black;"> <i class="bi bi-bookmark-plus"></i> Read Later </a> </div>
+              {% endif %}
             </div>
           </div>
         {% endfor %}
@@ -225,8 +238,7 @@
                 card.className = 'col';
                 card.innerHTML = `
                     <div class="card h-100" data-genre="${ book.genres }">
-                      {% comment %} TODO: tambahin link review book {% endcomment %}
-                      <a href="" style="text-decoration: none; color: black;">
+                      <a href="book-preview/preview/${ book.id }/" style="text-decoration: none; color: black;">
                         <img src= ${ book.cover_img } class="card-img-top">
                       </a>
                       <div class="card-body">
@@ -285,6 +297,8 @@
         disableSearchFeature();
       }
     });
+
+    document.getElementById('')
   </script>
 
 {% endblock %}
