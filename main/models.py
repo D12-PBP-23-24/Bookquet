@@ -17,3 +17,6 @@ class UserProfile(User):
   phone = models.IntegerField()
   age = models.IntegerField()
   region = models.TextField()
+
+class SearchFeatureStatus(models.Model):
+  enabled = models.BooleanField(default=True)

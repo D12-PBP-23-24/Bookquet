@@ -60,21 +60,38 @@
       </figure>
       {% if user.is_authenticated %}
         <p class="display-6 text-center fw-bold"> Selamat datang {{ name }}! 👋🏻 </p>
-        {% if user.is_staff %}
-          <p class="display-6 text-center fw-bold"> Kamu adalah admin! </p>
-        {% endif %}
+        <p class="text-center lead"> Sesi terakhir login: {{ last_login }} </p>
       {% endif %}
     </div>
   </header>
 
   <div id="search-bg">
     <div id="search-outer" class="container rounded-pill w-75"> 
-      <div class="d-flex" style="padding: 10px 10px 10px 10px;">
-        <p class="fw-bold p-2 flex-grow-1" style="color: white; margin: auto;"> Cari buku? </p> 
-        <a class="btn btn-outline-light" type="button" id="find-button" data-bs-toggle="modal" data-bs-target="#findBookModal"> <i class="bi bi-search"></i> </a>
+      <div id="search-inner" class="d-flex" style="padding: 10px 10px 10px 10px;">
+        {% if status %}
+          <p class="fw-bold p-2 flex-grow-1" style="color: white; margin: auto;" id="search-prompt"> Cari buku? </p>
+          <a class="btn btn-outline-light" type="button" id="find-button"data-bs-toggle="modal" data-bs-target="#findBookModal"> <i class="bi bi-search"></i> </a>
+        {% else %}
+          <p class="fw-bold p-2 flex-grow-1" style="color: white; margin: auto;" id="search-prompt"> Mohon maaf, fitur pencarian sedang dinonaktifkan </p>
+        {% endif %}
       </div>
     </div>
   </div>
+
+  <br>
+  <br>
+
+  {% if user.is_staff %}
+    <h4 class="container d-flex justify-content-center fw-bold"> 🧑‍💻 Pojok Admin 👩‍💻 </h4>
+
+    <div class="containter d-flex justify-content-center fw-bold">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" {% if status %} checked {% endif %}>
+        <label class="form-check-label" for="flexSwitchCheckChecked"> Fitur Search </label>
+      </div>
+    </div>
+  {% endif %}
+          
   <br>
 
   <h4 class="container d-flex justify-content-center fw-bold"> 📚 Daftar Buku 📚 </h4>
@@ -233,9 +250,39 @@
         searchBook(); // Call the searchBook function
     });
 
-    document.getElementById("form").addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        e.preventDefault(); // Prevent the default form submission action
+    document.getElementById("form").addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault(); // Prevent the default form submission action
+      }
+    });
+
+    // Function to enable the search feature
+    function enableSearchFeature() {
+      const searchInner  = document.querySelector('#search-inner');
+      
+      searchInner.innerHTML = `
+        <p class="fw-bold p-2 flex-grow-1" style="color: white; margin: auto;" id="search-prompt"> Cari buku? </p>
+        <a class="btn btn-outline-light" type="button" id="find-button"data-bs-toggle="modal" data-bs-target="#findBookModal"> <i class="bi bi-search"></i> </a>
+      `;
+    }
+
+    // Function to disable the search feature
+    function disableSearchFeature() {
+      const searchInner = document.querySelector('#search-inner');
+
+      searchInner.innerHTML = `
+        <p class="fw-bold p-2 flex-grow-1" style="color: white; margin: auto;" id="search-prompt"> Mohon maaf, fitur pencarian sedang dinonaktifkan </p>
+      `;
+    }
+
+    // Event listener for the switch button
+    document.getElementById('flexSwitchCheckChecked').addEventListener('change', function () {
+      if (this.checked) {
+        fetch("{% url 'main:toggle_search_feature' %}", { method: 'POST' });
+        enableSearchFeature();
+      } else {
+        fetch("{% url 'main:toggle_search_feature' %}", { method: 'POST' });
+        disableSearchFeature();
       }
     });
   </script>
