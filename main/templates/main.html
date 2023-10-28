@@ -89,7 +89,7 @@
                 <p class="card-text"><small class="text-body-secondary"> {{ book.author }} </small></p>
                 <p class="card-text"><small class="text-body-success border border-success rounded p-1"> {{ book.genres }} </small></p>
               </div>
-              <a href="#" class="stretched-link"></a>
+              <a href="{% url 'book_preview:show_preview' book.pk %}" class="stretched-link"></a>
               {% if user.is_authenticated %}
                 <div class="card-footer text-muted"> <i class="bi bi-bookmark-plus"></i> Read Later </div>
               {% endif %}

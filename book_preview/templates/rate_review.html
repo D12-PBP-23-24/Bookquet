@@ -32,7 +32,6 @@
     <button type="button" onclick="submitRatingCommentAjax()">Add Rating & Comment</button>
 </form>
 </div>
-<button type="button" onclick="showSelectedRating()">Show Selected Rating</button>
 
 <script>
   var selectedRating = 0;
@@ -78,9 +77,11 @@
         }
     })
     .then(response => response.json())
+
     .then(data => {
         if (data.success) {
             alert('Rating and comment added successfully.');
+            window.location.href = data.redirect_url;
         } else {
             alert('Failed to add rating and comment: ' + data.error);
         }

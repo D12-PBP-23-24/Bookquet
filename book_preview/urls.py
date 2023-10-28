@@ -16,11 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from book_preview.views import show_preview, add_rating_comment
+from book_preview.views import show_preview, add_rating_comment, recomendation_book
 
 app_name = 'book_preview'
 
 urlpatterns = [
     path('preview/<int:book_id>/', show_preview, name='show_preview'),
     path('review/<int:book_id>/', add_rating_comment, name='add_rating_comment'),
+    path('preview/json/<int:book_id>', recomendation_book, name="book_recomendation_json"),
 ]
