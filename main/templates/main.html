@@ -58,6 +58,17 @@
           <cite title="Source Title">J.K. Rowling</cite>
         </figcaption>
       </figure>
+
+      <div id="quote-of-the-day">
+        <h2>Quote of the Day</h2>
+        <p id="quote-text"></p>
+        <p id="quote-author"></p>
+        {% if user.is_staff %}
+          <a href="{% url 'main:edit_quote_of_the_day' %}" class="btn btn-primary">Edit</a>
+        {% endif %}
+      </div>
+      
+
       {% if user.is_authenticated %}
         <p class="display-6 text-center fw-bold"> Selamat datang {{ name }}! 👋🏻 </p>
         {% if user.is_staff %}
@@ -237,6 +248,25 @@
       if (e.key === "Enter") {
         e.preventDefault(); // Prevent the default form submission action
       }
+    });
+
+    function loadQuoteOfTheDay() {
+        fetch("{% url 'main:manage_quote_of_the_day' %}")
+            .then(response => response.json())
+            .then(data => {
+                // Perbarui tampilan dengan kutipan dan penulis
+                document.getElementById('quote-text').textContent = data.quote_text;
+                document.getElementById('quote-author').textContent = '- ' + data.author;
+            })
+            .catch(error => {
+                // Tampilkan pesan kesalahan jika ada masalah
+                document.getElementById('quote-of-the-day').innerHTML = 'Terjadi kesalahan saat mengambil Quote of the Day.';
+            });
+    }
+
+    // Panggil fungsi saat halaman dimuat
+    $(document).ready(function () {
+        loadQuoteOfTheDay();
     });
   </script>
 

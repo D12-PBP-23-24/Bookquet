@@ -1,4 +1,6 @@
 from django.db import models
+from django.conf import settings
+import random
 from django.contrib.auth.models import User
 
 class Book(models.Model):
@@ -13,7 +15,16 @@ class Book(models.Model):
   user_rated  = models.IntegerField(null=True, blank=True)
 
 class UserProfile(User):
-  nickname = models.TextField(null=True, blank=True)
-  phone = models.IntegerField()
-  age = models.IntegerField()
-  region = models.TextField()
+    nickname = models.TextField(null=True, blank=True)
+    phone = models.IntegerField()
+    age = models.IntegerField()
+    region = models.TextField()
+
+class QuoteOfDay(models.Model):
+    quote_text = models.TextField()
+    author = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.quote_text
+# class Review(models.Model):
+#   review = models.ForeignKey(Book, on_delete=models.CASCADE)
