@@ -129,7 +129,9 @@
       "isbn": 9780060256654,
       "genres": "Childrens",
       "cover_img": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1174210942l/370493._SX318_.jpg",
-      "year": 1964
+      "year": 1964,
+      "average_rate": 0,
+      "user_rated": 0
     }
   },
   {

@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "main",
-    "book_preview"
+    "book_preview",
     "adminpage",
     'read_later',
 ]
