@@ -21,4 +21,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include('main.urls')),
     path("", include("book_preview.urls")),
+    #path("adminpage/", include('adminpage.urls')),
+    path("read-later/", include('read_later.urls')),
 ]
+ 

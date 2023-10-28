@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<style>
+    #centerContainer{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+</style>
+
+<div id = "centerContainer" class="d-flex flex-column">
+    <h2>Add "{{ book.title }}" to Read Later</h2>
+    <form id="readLaterForm">
+        {% csrf_token %}
+        <label for="priority">Priority: </label>
+        {{ form.priority }}
+        <button type="button" onclick="submitFormAjax()">Add to Read Later</button>
+    </form>
+</div>
+
+<script>
+    function submitFormAjax() {
+        const form = document.getElementById("readLaterForm");
+        const formData = new FormData(form);
+
+        fetch("{% url 'read_later:add_to_read_later' book.id %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => {
+        if (!response.ok) { 
+            throw new Error('Buku sudah pernah ditambahkan ke read later dengan prioritas lain'); 
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) { 
+            alert('Book added to Read Later list!');
+            window.location.href = data.redirect_url;
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert(error.message);
+        console.error('Error:', error);
+    });
+    }
+</script>
+{% endblock %}

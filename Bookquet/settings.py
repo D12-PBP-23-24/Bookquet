@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
+LOGIN_URL = 'main:login'
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -41,9 +42,15 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "main",
     "book_preview"
+    "adminpage",
+    'read_later',
 ]
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_root/')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 MIDDLEWARE = [
@@ -60,9 +67,9 @@ ROOT_URLCONF = "Bookquet.urls"
 
 TEMPLATES = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'templates'],
-        "APP_DIRS": True,
+        'APP_DIRS': True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -122,9 +129,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
+# STATIC_URL = "static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
