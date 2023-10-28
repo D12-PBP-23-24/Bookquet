@@ -32,23 +32,31 @@
 
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item active">
-                        {% comment %} Fitur Dashboard {% endcomment %}
-                        <a type="button" class="btn btn-outline-light btn-sm">
-                            <i class="bi bi-person-circle"></i>
-                            {% comment %} TODO: Tambahin URL dashboard {% endcomment %}
-                        </a>
+                        {% if user.is_authenticated %}
+                            {% comment %} Fitur Dashboard {% endcomment %}
+                            <a type="button" class="btn btn-outline-light btn-sm">
+                                <i class="bi bi-person-circle"></i>
+                                {% comment %} TODO: Tambahin URL dashboard {% endcomment %}
+                            </a>
 
-                        {% comment %} Fitur Read Later {% endcomment %}
-                        <a type="button" class="btn btn-outline-light btn-sm">
-                            <i class="bi bi-journal-bookmark-fill"></i>
-                            {% comment %} TODO: Tambahin URL read later {% endcomment %}
-                        </a>
+                            {% comment %} Fitur Read Later {% endcomment %}
+                            <a type="button" class="btn btn-outline-light btn-sm">
+                                <i class="bi bi-journal-bookmark-fill"></i>
+                                {% comment %} TODO: Tambahin URL read later {% endcomment %}
+                            </a>
 
-                        {% comment %} Fitur Logout {% endcomment %}
-                        <a type="button" class="btn btn-outline-light btn-sm">
-                            <i class="bi bi-box-arrow-right"></i>
-                            {% comment %} TODO: Tambahin URL logout {% endcomment %}
-                        </a>
+                            {% comment %} Fitur Logout {% endcomment %}
+                            <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'main:logout' %}">
+                                <i class="bi bi-box-arrow-right"></i>
+                                {% comment %} TODO: Tambahin URL logout {% endcomment %}
+                            </a>
+                        {% else %}
+                            {% comment %} Fitur Login {% endcomment %}
+                            <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'main:login' %}">
+                                <i class="bi bi-door-open-fill"></i>
+                                {% comment %} TODO: Tambahin URL logout {% endcomment %}
+                            </a>
+                        {% endif %}
                     </li>
                 </ul>
 

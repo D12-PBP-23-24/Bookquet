@@ -12,5 +12,8 @@ class Book(models.Model):
   average_rate= models.FloatField(null=True, blank=True)
   user_rated  = models.IntegerField(null=True, blank=True)
 
-class Review(models.Model):
-  review = models.ForeignKey(Book, on_delete=models.CASCADE)
+class UserProfile(User):
+  nickname = models.TextField(null=True, blank=True)
+  phone = models.IntegerField()
+  age = models.IntegerField()
+  region = models.TextField()
