@@ -83,16 +83,17 @@
         {% for book in books %}
           <div class="col">
             <div class="card h-100" data-genre="{{ book.genres }}">
-              <img src= {{ book.cover_img }} class="card-img-top">
+              {% comment %} TODO: tambahin link review book {% endcomment %}
+              <a href="" style="text-decoration: none; color: black;">
+                <img src= {{ book.cover_img }} class="card-img-top">
+              </a>
               <div class="card-body">
                 <h5 class="card-title fw-bold"> {{ book.title }} </h5>
                 <p class="card-text"><small class="text-body-secondary"> {{ book.author }} </small></p>
                 <p class="card-text"><small class="text-body-success border border-success rounded p-1"> {{ book.genres }} </small></p>
               </div>
-              <!-- <a href="#" class="stretched-link"></a> -->
-
               {% if user.is_authenticated %}
-                <div class="card-footer text-muted"> <a class = "btn btn-secondary" href='read-later/add-to-read-later/{{book.id}}/'> <i class="bi bi-bookmark-plus"> </i> Read Later </a> </div> 
+                <div class="card-footer text-muted"> <i class="bi bi-bookmark-plus"></i> Read Later </div>
               {% endif %}
             </div>
           </div>
@@ -163,17 +164,22 @@
                 const card = document.createElement('div');
                 card.className = 'col';
                 card.innerHTML = `
-                    <div class="card h-100" data-genre="${book.genres}">
-                        <img src="${book.cover_img}" class="card-img-top">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">${book.title}</h5>
-                            <p class="card-text"><small class="text-body-secondary">${book.author}</small></p>
-                            <p class="card-text"><small class="text-body-success border border-success rounded p-1">${book.genres}</small></p>
+                    <div class="card h-100" data-genre="${ book.genres }">
+                      {% comment %} TODO: tambahin link review book {% endcomment %}
+                      <a href="" style="text-decoration: none; color: black;">
+                        <img src= ${ book.cover_img } class="card-img-top">
+                      </a>
+                      <div class="card-body">
+                        <h5 class="card-title fw-bold"> ${ book.title } </h5>
+                        <p class="card-text"><small class="text-body-secondary"> ${ book.author } </small></p>
+                        <p class="card-text"><small class="text-body-success border border-success rounded p-1"> ${ book.genres } </small></p>
+                      </div>
+                      {% if user.is_authenticated %}
+                        <div class="card-footer text-muted d-flex justify-content-center">
+                          {% comment %} TODO: tambahin link read later {% endcomment %}
+                          <a type="button" style="color: grey; text-decoration: none;" href=""> <i class="bi bi-bookmark-plus"></i> Read Later </a> 
                         </div>
-                        <a href="#" class="stretched-link"></a>
-                        {% if user.is_authenticated %}
-                          <div class="card-footer text-muted"> <i class="bi bi-bookmark-plus"></i> Read Later </div>
-                        {% endif %}
+                      {% endif %}
                     </div>
                 `;
                 bukuDiv.appendChild(card);
