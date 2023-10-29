@@ -34,12 +34,11 @@
   </button>
 </div>
 <br/>
-<div class="container">  <br>
-    <h3 class="text-center display-4" style="font-size: 28px;">Buku yang sudah di rate:</h3>
+<div class="container"> <br>
+    <h3 class="text-center display-4" style="font-size: 28px;">Buku yang sudah di rate oleh user <b>{{user.username}}</b> :</h3>
     <br>
-    
       <div class="text-center">
-        <label for="rateFilter">Filter by Star Rating:</label>
+        <label for="rateFilter">Filter by Star Rating:</label><br><br>
         <div class="input-group">
         <select id="rateFilter" class="form-select">
           <option value="all">All</option>
@@ -49,13 +48,11 @@
           <option value="4">4 Stars</option>
           <option value="5">5 Stars</option>
         </select>
-        <button id="applyFilter" class="btn btn-primary">Apply</button>
       </div>
       </div>
       <br>
 
-
-    <div class="row">
+    <div class="row"  id="ratedBooks">
       {% for book in rated_books %}
         <div class="col-md-3">
             <div class="card mb-4">
@@ -113,9 +110,59 @@
 </div>
 
 <script>
+
     $(document).ready(() => {
         refreshProfile();
     });
+
+    document.getElementById("rateFilter").addEventListener("change", function () {
+        const selectedFilter = this.value;
+        filterBooks(selectedFilter);
+    });
+
+    function filterBooks(selectedRating) {
+        getFilteredBooks(selectedRating)
+            .then((filteredBooks) => {
+            displayFilteredBooks(filteredBooks);
+            })
+            .catch((error) => {
+            console.error(error);
+            });
+    }
+
+    async function getFilteredBooks(filter) {
+        const response = await fetch(`{% url 'dashboard:filter_books' %}?filter=${filter}`);
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error(`Failed to fetch filtered books: ${response.statusText}`);
+        }
+    }
+
+    const ratedBooksContainer = document.getElementById("ratedBooks");
+
+    function displayFilteredBooks(filteredBooks) {
+    ratedBooksContainer.innerHTML = "";
+
+    filteredBooks.forEach((book) => {
+      const bookHTML = `
+            <div class="col-md-3">
+                <div class="card mb-4">
+                    <img src="${book.cover_img}" class="card-img-top" alt="${book.title}" style="height: 400px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">${book.title}</h5>
+                        <p class="card-text"><small class="text-body-secondary"> ${book.author}</small></p>
+                        <p class="card-text"><small class="text-body-success border border-success rounded p-1"> ${book.genres} </small></p>
+                    </div>
+                    <div class="card-footer text-muted">
+                      <a href="/book-preview/review/${book.id}/" style="text-decoration: none; color: black;"> <i class="bi bi-star"></i> Edit Rate </a>
+                  </div>
+                </div>
+            </div>
+        `;
+      ratedBooksContainer.innerHTML += bookHTML;
+    });
+  }
 
   async function getProfile() {
     return fetch("{% url 'dashboard:get_profile_json' %}").then((res) => res.json());
@@ -125,7 +172,6 @@
     const profile = await getProfile();
     const informationContainer = document.getElementById("information");
     informationContainer.innerHTML = "";
-
     const htmlString = `
         <div class="container text-center" style="margin-top: 20px; max-width: 500px;">
             <ul class="list-group mb-4 border rounded">
@@ -165,3 +211,4 @@
   });
 </script>
 {% endblock content %}
+

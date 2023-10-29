@@ -1,5 +1,5 @@
 from django.urls import path
-from dashboard.views import filter_books, get_profile_json, get_rated_books_json, show_dashboard, edit_profile_ajax, show_json , show_xml
+from dashboard.views import filter_books_view, get_profile_json, get_rated_books_json, show_dashboard, edit_profile_ajax, show_json , show_xml
 
 app_name = 'dashboard'
 
@@ -10,5 +10,5 @@ urlpatterns = [
     path('xml/', show_xml, name='show_xml'), 
     path('json/', show_json, name='show_json'), 
     path('get_rated_books_json/', get_rated_books_json, name='get_rated_books_json'),
-    path('filter_books/', filter_books, name='filter_books'),
+    path('filter_books/', filter_books_view, name='filter_books'),
 ]

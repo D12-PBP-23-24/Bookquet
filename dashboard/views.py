@@ -54,30 +54,30 @@ def get_profile_json(request):
 
 
 
-def filter_books(request):
-    selected_rating = request.GET.get("rating", "all")
+def filter_books_view(request):
+    filter_param = request.GET.get("filter")
     user = request.user
 
-    if selected_rating == "all":
+    if filter_param == "all":
         rated_books = Rate.objects.filter(user=user).values_list('buku', flat=True)
+        books = Book.objects.filter(pk__in=rated_books)
     else:
-        rated_books = Rate.objects.filter(user=user, rating=selected_rating).values_list('buku', flat=True)
+        rated_books = Rate.objects.filter(user=user, rating=filter_param).values_list('buku', flat=True)
+        books = Book.objects.filter(pk__in=rated_books)
 
-    rated_books = Book.objects.filter(pk__in=rated_books)
-
-    filtered_books_data = [
+    books_data = [
         {
+            "id" : book.pk,
             "title": book.title,
             "author": book.author,
             "cover_img": book.cover_img,
             "genres": book.genres,
-            "rating": Rate.objects.get(user=user, buku=book).rating
+            "rating": filter_param, 
         }
-        for book in rated_books
+        for book in books
     ]
 
-    return JsonResponse(filtered_books_data, safe=False)
-
+    return JsonResponse(books_data, safe=False)
 
 def get_rated_books_for_user(user):
     rated_books = Rate.objects.filter(user=user).values_list('buku', flat=True)
