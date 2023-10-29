@@ -19,6 +19,7 @@
             body {
                 padding-top: 40px;
             }
+            
         </style>
     </head>
 
@@ -45,7 +46,7 @@
                             </a>
 
                             {% comment %} Fitur Logout {% endcomment %}
-                            <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'main:logout' %}">
+                            <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'main:logout_user' %}">
                                 <i class="bi bi-box-arrow-right"></i>
                             </a>
                             
@@ -63,5 +64,46 @@
 
         {% block content %}
         {% endblock content %}
+        
+        <footer class="bg-light text-center text-lg-start">
+            <!-- Grid container -->
+            <div class="container p-4">
+              <!--Grid row-->
+              <div class="row">
+                <!--Grid column-->
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                  <h5 class="fw-bold"> 📕 Bookquet 💐 </h5>
+          
+                  <p>
+                    Sebuah aplikasi inovatif yang menghadirkan literasi ke dalam pengalaman baru.
+                    Lebih dari sekadar perpustakaan pribadi, Bookquet memanjakan pengguna melalui fitur penyimpanan buku yang akan dibaca nanti.
+                    Selain itu, pengguna dapat memberikan ulasan mengenai buku yang sudah dibaca.
+                  </p>
+                </div>
+                <!--Grid column-->
+          
+                <!--Grid column-->
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                  <h5 class="fw-bold"> 👥 Kelompok D-12 👥</h5>
+          
+                  <p>
+                    Proyek ini dibuat untuk memenuhi tugas Proyek Tengah Semester (PTS) pada mata kuliah
+                    Pemrograman Berbasis Platform (CSGE602022) yang diselenggarakan oleh Fakultas Ilmu Komputer, 
+                    Universitas Indonesia Tahun Ajaran 2023/2024 Semester Gasal.
+                  </p>
+                </div>
+                <!--Grid column-->
+              </div>
+              <!--Grid row-->
+            </div>
+            <!-- Grid container -->
+          
+            <!-- Copyright -->
+            <div class="text-center p-3 text-light" style="background-color: #408558;">
+              Copyright © 2023 D-12
+            </div> 
+            <!-- Copyright -->
+        </footer>
+
     </body>
 </html>
