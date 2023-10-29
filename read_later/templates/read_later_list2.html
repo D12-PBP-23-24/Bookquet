@@ -12,6 +12,7 @@
         </div>
     </div>
 
+    <p class="text-center lead"> Sesi terakhir login: {{ last_login }} </p>
 
     <div class="btn-group" role="group" aria-label="Priority Filter" style="display: flex; justify-content: center; margin: 20px 0;">
         <div class="btn-group" role="group" aria-label="Priority Filter">
@@ -53,7 +54,7 @@
             });
         });
 
-        refreshProducts('all');
+        // refreshProducts('all');
     });
 </script>
 
