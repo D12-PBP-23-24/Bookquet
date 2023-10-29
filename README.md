@@ -25,12 +25,11 @@ Berikut ini adalah daftar modul yang akan kami implementasikan beserta pengemban
  
 | Modul | Penjelasan | Pengembang |
 | -- | -- | -- |
-| **Authentication & Admin Dashboard** | Pengguna pada aplikasi Django ini dapat melakukan registrasi, *login*, dan *logout*. Pengguna dapat mengubah *password* mereka. | Carissa |
-| **Dashboard** | Menampilkan informasi pribadi pengguna. | Carissa |
+| **Authentication** | Pengguna pada aplikasi Django ini dapat melakukan registrasi, *login*, dan *logout*. Pengguna dapat mengubah *password* mereka. | Carissa |
+| **Dashboard** | Menampilkan informasi pribadi pengguna. Pengguna dapat meng-edit data pribadinya serta mengakses data buku yang sudah ia nilai | Farah |
 | **Homepage** | Menampilkan halaman utama berupa daftar buku. Pengguna disambut dengan *hero block* dan daftar buku dibawahnya. Pengguna juga bisa menggunakan fitur *filter* dan *search* untuk mencari buku berdasarkan *genre* dan judul. | Akmal |
-| **Book Preview**| Menampilkan informasi suatu buku seperti sinopsis, pengarang, ISBN, dan lain-lain. Pengguna dapat memberikan *review*, *rate*, atau memasukkan buku ke dalam daftar baca nanti.  | William |
+| **Book Preview, Rate & Review**| Menampilkan informasi suatu buku seperti sinopsis, pengarang, ISBN, dan lain-lain. Pengguna dapat memberikan *review*, *rate*, atau memasukkan buku ke dalam daftar baca nanti. Pengguna juga dapat menambahkan *review* dan *rating* pada suatu buku. Pada aplikasi ini, pengguna dapat melihat daftar buku yang sudah diberi *review* dan *rating* serta dapat mengedit salah satunya  | William |
 | **Read Later** | Pengguna dapat menambahkan suatu buku ke dalam daftar baca nanti. Dalam aplikasi Django ini, pengguna dapat melihat daftar buku yang ditambahkan dan dapat menghapus buku tersebut dari daftar baca nanti. | Edbert |
-| **Rate & Review Book** | Pengguna juga dapat menambahkan *review* dan *rating* pada suatu buku. Pada aplikasi ini, pengguna dapat melihat daftar buku yang sudah diberi *review* dan *rating* serta dapat mengedit salah satunya. | Farah |
 
 ## 🕵️ *Role* atau Peran Pengguna 
 ### 1. 👨‍💻 User
