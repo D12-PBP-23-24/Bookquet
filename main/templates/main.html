@@ -23,7 +23,6 @@
           <cite title="Source Title">J.K. Rowling</cite>
         </figcaption>
       </figure>
-<<<<<<< HEAD
 
       <div id="quote-of-the-day">
         <h2>Quote of the Day</h2>
@@ -33,8 +32,6 @@
           <a href="{% url 'adminpage:edit_quote_of_the_day' %}" class="btn btn-primary">Edit</a>
         {% endif %}
       </div>
-=======
->>>>>>> 9942678642a0bfc78dad9f2cc2de796bd89783c3
       
       {% if user.is_authenticated %}
         <p class="display-6 text-center fw-bold"> Selamat datang {{ name }}! 👋🏻 </p>
@@ -183,92 +180,5 @@
     <!-- Copyright -->
   </footer>
 
-<<<<<<< HEAD
-  <script>
-    function searchBook() {
-        const title = document.querySelector('#id_title').value;
-        const genre = document.querySelector('#id_genres').value;
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-        fetch("{% url 'main:find_book' %}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": csrfToken,
-            },
-            body: JSON.stringify({ title, genre }),
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            // Clear existing cards
-            const bukuDiv = document.getElementById('buku');
-            bukuDiv.innerHTML = '';
-
-            // Populate cards with the search results
-            data.books.forEach((book) => {
-                const card = document.createElement('div');
-                card.className = 'col';
-                card.innerHTML = `
-                    <div class="card h-100" data-genre="${ book.genres }">
-                      {% comment %} TODO: tambahin link review book {% endcomment %}
-                      <a href="" style="text-decoration: none; color: black;">
-                        <img src= ${ book.cover_img } class="card-img-top">
-                      </a>
-                      <div class="card-body">
-                        <h5 class="card-title fw-bold"> ${ book.title } </h5>
-                        <p class="card-text"><small class="text-body-secondary"> ${ book.author } </small></p>
-                        <p class="card-text"><small class="text-body-success border border-success rounded p-1"> ${ book.genres } </small></p>
-                      </div>
-                      <div class="card-footer text-muted"> <a href="read-later/add-to-read-later/${ book.id }/" style="text-decoration: none; color: black;"> <i class="bi bi-bookmark-plus"></i> Read Later </a> </div>
-                    </div>
-                `;
-                bukuDiv.appendChild(card);
-            });
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-    }
-
-    document.getElementById("button_add").addEventListener('click', function (event) {
-        event.preventDefault(); // Prevent default form submission
-        searchBook(); // Call the searchBook function
-    });
-
-    document.getElementById("form").addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        e.preventDefault(); // Prevent the default form submission action
-      }
-    });
-
-    function loadQuoteOfTheDay() {
-        fetch("{% url 'adminpage:manage_quote_of_the_day' %}")
-            .then(response => response.json())
-            .then(data => {
-                // Perbarui tampilan dengan kutipan dan penulis
-                document.getElementById('quote-text').textContent = data.quote_text;
-                document.getElementById('quote-author').textContent = '- ' + data.author;
-            })
-            .catch(error => {
-                // Tampilkan pesan kesalahan jika ada masalah
-                document.getElementById('quote-of-the-day').innerHTML = 'Terjadi kesalahan saat mengambil Quote of the Day.';
-            });
-    }
-
-    // Panggil fungsi saat halaman dimuat
-    $(document).ready(function () {
-        loadQuoteOfTheDay();
-    });
-  </script>
-
-{% endblock %}
-=======
   <script type="text/javascript" src="{% static '/js/main.js' %}"></script>
 {% endblock content %}
->>>>>>> 9942678642a0bfc78dad9f2cc2de796bd89783c3
