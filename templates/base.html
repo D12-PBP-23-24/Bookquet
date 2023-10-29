@@ -33,7 +33,7 @@
                     <li class="nav-item active">
                         {% if user.is_authenticated %}
                             {% comment %} Fitur Dashboard {% endcomment %}
-                            <a type="button" class="btn btn-outline-light btn-sm">
+                            <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'dashboard:show_dashboard' %}">
                                 <i class="bi bi-person-circle"></i>
                                 {% comment %} TODO: Tambahin URL dashboard {% endcomment %}
                             </a>

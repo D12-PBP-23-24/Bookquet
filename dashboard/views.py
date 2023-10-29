@@ -1,17 +1,14 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from django.urls import reverse
 
 from main.models import Book, UserProfile
 from .forms import ProfileForm
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse, HttpResponseBadRequest
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 
 from django.core import serializers
 
 @csrf_exempt
 def show_dashboard(request):
-    # books_reviewed = Book.objects.filter(user_rated=request.user)
 
     user = request.user  # Mengambil objek pengguna yang sedang masuk
     profile = UserProfile.objects.get(username=user.username)  
@@ -19,11 +16,6 @@ def show_dashboard(request):
     context = {
         'user': user,
         'profile': profile,
-        # 'books_reviewed' : books_reviewed,
-        # 'nickname': nickname,
-        # 'age': age,
-        # 'phone': phone,
-
     }
     return render(request, "dashboard.html", context)
 
