@@ -24,91 +24,36 @@
         </div>
     </div>
     
-    
     <div id="info" style="display: flex; justify-content: center; align-items: center;"> </div>
     <div class="row" id="item_card"> </div> 
 
 </div>
 </div>
 
-
 <script>
     let currentPriority = "all";
-    async function getItem(priority) {
-        return fetch("{% url 'read_later:read_later_list_json' %}?priority=" + priority).then((res) => res.json());
-    }
+    let readLaterListJSONUrl = "{% url 'read_later:read_later_list_json' %}";
+    let deleteItemAjaxUrlTemplate = "{% url 'read_later:delete_item_ajax' item_id='999' %}";
+    let adjustPriorityAjaxUrlTemplate = "{% url 'read_later:adjust_priority_ajax' item_id='999' %}";
+    let csrfToken = '{{ csrf_token }}';
+    let isAdminString = "{{ is_admin|yesno:'true,false' }}";
+    let isAdmin = (isAdminString === "true");
+</script>
 
-    async function refreshProducts(priority = "all") { // "all" is the default value
-        currentPriority = priority; 
-        document.getElementById("info").innerHTML = `<h3> ${priority} priority </h3>`;
-        
-        document.getElementById("item_card").innerHTML = "";
-        const items = await getItem(priority);
-        
-        items.forEach((item) => {
-            let cardHTML = `
-            <div class="col-md-3 col-sm-6 mb-4 d-flex">
-                <div class="card w-100">
-                    <img src="${item.cover_img}" class="card-img-top" alt="${item.title}" style="height: 200px; object-fit: cover;">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">${item.title}</h5>
-                        <p class="card-text">${item.author}</p>
-                        <div class="mb-auto">
-                            <p class="card-text d-inline" style="border: 1px solid #28a745; border-radius: 5px; padding: 0.5rem;">${item.genres}</p>
-                        </div>
-                        {% if is_admin %}
-                            <button onclick="adjustPriority(${item.id});" class="btn btn-warning mb-2">Update Priority</button>
-                        {% endif %}
-                        <button onclick="deleteItem(${item.id});" class="btn btn-danger">Remove from Read Later</button>
-                    </div>
-                </div>
-            </div>
-            `;
-            document.getElementById("item_card").innerHTML += cardHTML;
+<script type="text/javascript" src="{% static '/js/read_later_list.js' %}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const filterButtons = document.querySelectorAll('.btn-group a');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                const priority = this.textContent.toLowerCase();
+                refreshProducts(priority);
+            });
         });
-    }
-    
-    refreshProducts('all');
 
-    async function deleteItem(itemId) {
-        const deleteUrl = `{% url 'read_later:delete_item_ajax' item_id='999' %}`.replace('999', itemId);
-        try {
-            const response = await fetch(deleteUrl, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                }
-            });
-
-            if (response.ok) {
-                refreshProducts(currentPriority); 
-            } else {
-                console.error('Failed to delete product. Server responded with:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-    async function adjustPriority(itemId) {
-        const adjustUrl = `{% url 'read_later:adjust_priority_ajax' item_id='999' %}`.replace('999', itemId);
-        try {
-            const response = await fetch(adjustUrl, {
-                method: 'PUT',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                }
-            });
-
-            if (response.ok) {
-                refreshProducts(currentPriority);
-            } else {
-                console.error('Failed to adjust priority. Server responded with:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-
+    });
 </script>
 
 {% endblock content %}
