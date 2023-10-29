@@ -7,7 +7,6 @@ class UserProfile(User):
     phone = models.IntegerField()
     age = models.IntegerField()
     region = models.TextField()
-
     user_ptr = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True, related_name='admin_userprofile')
 
 class QuoteOfDay(models.Model):

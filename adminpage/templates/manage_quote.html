@@ -1,4 +1,4 @@
-<form id="quote-form" method="post" data-url="{% url 'main:manage_quote_of_the_day' %}">
+<form id="quote-form" method="post" data-url="{% url 'adminpage:manage_quote_of_the_day' %}">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Simpan</button>

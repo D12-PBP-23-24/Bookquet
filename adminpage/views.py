@@ -3,8 +3,8 @@ from django.http                    import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf   import csrf_exempt
 from django.contrib.auth.decorators import login_required
 
-from main.models        import Book, UserProfile
-from main.forms         import UserProfileForm, AddBookForm
+from main.models        import UserProfile
+from main.forms         import UserProfileForm
 from .models            import QuoteOfDay
 from .forms             import QuoteOfDayForm
 
@@ -17,7 +17,7 @@ def show_dashboard(request):
         'user': user,
         'profile': profile,
     }
-    return render(request, "dashboard.html", context)
+    return render(request, "admindash.html", context)
 
 @login_required
 def manage_quote_of_the_day(request):
@@ -37,13 +37,13 @@ def edit_quote_of_the_day(request):
     quote_of_the_day = QuoteOfDay.objects.first()
 
     if not request.user.is_staff:
-        return redirect('adminpage:show_main')  # Redirect jika bukan admin
+        return redirect('adminpage:show_dashboard')  # Redirect jika bukan admin
 
     if request.method == 'POST':
         form = QuoteOfDayForm(request.POST, instance=quote_of_the_day)
         if form.is_valid():
             form.save()
-            return redirect('adminpage:show_main') 
+            return redirect('adminpage:show_dashboard') 
     else:
         form = QuoteOfDayForm(instance=quote_of_the_day)
 
