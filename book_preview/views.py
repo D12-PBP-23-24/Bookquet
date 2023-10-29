@@ -5,19 +5,16 @@ from django.shortcuts import get_object_or_404
 from book_preview.models import Comment, Rate, Filter
 from .forms import RateForm, CommentForm
 from .utils import calculate_new_average_rating
-from django.shortcuts import redirect
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse
 import json
 from django.http import JsonResponse
-from django.core import serializers
 from random import sample
 
-
 def show_preview(request, book_id):
-    book = Book.objects.get(pk = book_id)
-    rate = Rate.objects.filter(buku = book)
-    comment = Comment.objects.filter(buku = book)
+    book = Book.objects.get(pk=book_id)
+    rate = Rate.objects.filter(buku=book)
+    comment = Comment.objects.filter(buku=book)
 
     try:
         global_filter = Filter.objects.first()
@@ -27,16 +24,23 @@ def show_preview(request, book_id):
             default_filter = 'terbaru'
     except Filter.DoesNotExist:
         default_filter = 'terbaru'
-    
+
+    # Check if book.average_rate is not None before performing floor division
+    average_rate_floored = book.average_rate // 1 if book.average_rate is not None else 0
+
     context = {
         "book": book,
         "rate": rate,
-        "average_rate_floored": book.average_rate//1, #due to lack of flexibility from django template if-else statement
+        "average_rate_floored": average_rate_floored,
         "comment": comment,
         "default_filter": default_filter,
     }
 
+    if request.user.is_authenticated:
+        context['last_login'] = request.COOKIES['last_login']
+
     return render(request, "preview.html", context)
+
 
 @login_required
 def add_rating_comment(request, book_id):
@@ -122,19 +126,16 @@ def recomendation_book(request, book_id):
 
 
 def filter_comments(request, filter_type):
-    # Handle the filter logic
     if filter_type == 'recent':
-        comments = Comment.objects.order_by('-id')[:2]  # Get the 6 most recent comments
+        comments = Comment.objects.order_by('-id')[:6]
     elif filter_type == 'random':
         all_comments = Comment.objects.all()
-        if all_comments.count() <= 2:
-            comments = all_comments  # If there are 6 or fewer comments, no need to sample
+        if all_comments.count() <= 6:
+            comments = all_comments 
         else:
-            random_comments = sample(list(all_comments), 2)  # Sample 6 random comments
+            random_comments = sample(list(all_comments), 6)
             comments = Comment.objects.filter(id__in=[c.id for c in random_comments])
     
-    print(comments)
-
     comment_data = [
         {
             'komentar': comment.komentar,
@@ -143,29 +144,22 @@ def filter_comments(request, filter_type):
         }
         for comment in comments
     ]
-
     return JsonResponse({'comments': comment_data})
-
 
 def update_global_filter_settings(request):
     if request.user.is_staff:
-        # Check if the user is an admin (staff member)
         try:
             global_filter = Filter.objects.first()
             if global_filter is not None:
-                # Update the filter type based on the request data
                 filter_type = request.GET.get('filter_type')
                 global_filter.filter_type = filter_type
                 global_filter.save()
                 return JsonResponse({'success': True})
             else:
-                # Create a new global filter if it doesn't exist
                 filter_type = request.GET.get('filter_type', 'terbaru')
                 Filter.objects.create(filter_type=filter_type)
                 return JsonResponse({'success': True})
         except Filter.DoesNotExist:
-            # Handle the case where no Filter object exists
             return JsonResponse({'success': False, 'error': 'Filter does not exist'})
     else:
-        # Handle the case where a non-admin user is trying to update the filter (optional)
         return JsonResponse({'success': False, 'error': 'Permission denied'})

@@ -71,107 +71,121 @@
         <img src="{{book.cover_img}}" class="img-fluid mb-md-0 mb-3 mx-auto d-block"></img>
     </div>
 
-    <div class="container d-flex flex-row" style="padding: 50px 0px; gap: 40px;">
+    {% if user.is_authenticated %}
+    <div class="d-flex justify-content-center py-2">
+        <p class="text-">Last login kamu: {{ last_login }} </p>
+    </div>
+    {% endif %}
+
+
+    <div class="container d-flex flex-column" style="padding: 50px 0px; gap: 40px;">
         <section class="border-right border-dark">
             <div class="container d-flex flex-column gap-3">
                 <h3>Komentar ditampilkan berdasarkan <span id="filterType">{{ default_filter }}</span></h3>
                 {% if user.is_staff %}
                 <div class="d-flex flex-row gap-3 justify-content-center">
-                        <button class="btn btn-primary" onclick="filterComments('recent')">Filter by Recent</button>
-                        <button class="btn btn-primary" onclick="filterComments('random')">Filter by Random</button>
+                    <button class="btn btn-primary" onclick="filterComments('recent')">Filter by Recent</button>
+                    <button class="btn btn-primary" onclick="filterComments('random')">Filter by Random</button>
                 </div>
                 {% endif %}
 
-                <div class="row" id="commentSection"></div> 
-
+            <div class="row" id="commentSection"></div> 
         </section>
 
-    <section>
-        <div class="row" id="item_card"></div> 
-    </section>
-
-
-</div>
+        <section>
+            {% if user.is_authenticated %}
+            <h3>Rekomendasi buku untuk {{ user.username }}</h3>
+            {% else %}
+            <h3>Rekomendasi buku untukmu</h3>
+            {% endif %}
+            <div class="row" id="item_card"></div> 
+        </section>
+    </div>
 
 <script>
     let currentFilter = "genre";
-    async function getItem(filter) {
-        return fetch("{% url 'book_preview:book_recomendation_json' book.pk %}?filter=" + filter).then((res) => res.json());
-    }
+    let bookPreviewURL = "{% url 'book_preview:book_recomendation_json' book.pk %}"
 
-    async function refreshProducts(filter = "all") { // "all" is the default value
-        currentFilter = filter; 
+    // async function getItem(filter) {
+    //     return fetch("{% url 'book_preview:book_recomendation_json' book.pk %}?filter=" + filter).then((res) => res.json());
+    // }
+
+    // async function refreshProducts(filter = "genre") {
+    //     currentFilter = filter; 
         
-        document.getElementById("item_card").innerHTML = "";
-        const items = await getItem(filter);
+    //     document.getElementById("item_card").innerHTML = "";
+    //     const items = await getItem(filter);
         
-        items.forEach((item) => {
-            let cardHTML = `
-            <div class="col-md-3 col-sm-6 mb-4 d-flex">
-                <div class="card w-100">
-                    <img src="${item.cover_img}" class="card-img-top" alt="${item.title}" style="height: 200px; object-fit: cover;">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">${item.title}</h5>
-                        <p class="card-text">${item.author}</p>
-                        <div class="mb-auto">
-                            <p class="card-text d-inline" style="border: 1px solid #28a745; border-radius: 5px; padding: 0.5rem;">${item.genres}</p>
-                        </div>
-                        {% if is_admin %}
-                            <button onclick="adjustPriority(${item.id});" class="btn btn-warning mb-2">Update Priority</button>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            `;
-            document.getElementById("item_card").innerHTML += cardHTML;
-        });
-    }
-    
-    refreshProducts('genre');
+    //     items.forEach((item) => {
+    //         let cardHTML = `
+    //         <div class="col-md-3 col-sm-6 mb-4">
+    //             <div class="card">
+    //                 <img src="${item.cover_img}" class="card-img-top" alt="${item.title}">
+    //                 <div class="card-body">
+    //                     <h5 class="card-title">${item.title}</h5>
+    //                     <p class="card-text">${item.author}</p>
+    //                 </div>
+    //                 <div class="card-footer d-flex justify-content-between">
+    //                     <span class="font-light badge bg-primary">${item.genres}</span>
+
+    //                 </div>
+    //             </div>
+    //         </div>
+    //         `;
+    //         document.getElementById("item_card").innerHTML += cardHTML;
+    //     });
+    // }
+
+    // refreshProducts('genre');
 
 
     let currentFilterComments = "{{ default_filter }}";
     const storedFilterComments = localStorage.getItem("currentFilterComments");
-    
+
     if (storedFilterComments) {
         currentFilterComments = storedFilterComments;
         document.getElementById("filterType").textContent = currentFilterComments;
     }
 
-    async function refreshComments(filterType) {
-        const comments = await fetchComments(filterType);
-        const commentSection = document.getElementById("commentSection");
-        commentSection.innerHTML = "";
 
-        comments.forEach((comment) => {
-            const commentHTML = `
-                <div class="col-md-6">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5>${comment.user}</h5>
-                            <p class="card-text">${comment.komentar}</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-            commentSection.innerHTML += commentHTML;
-        });
-        localStorage.setItem("currentFilterComments", filterType);
-    }
 
-    async function fetchComments(filterType) {
-        try {
-            const response = await fetch(`/filter-comments/${filterType}/`);
-            if (response.ok) {
-                const data = await response.json();
-                return data.comments;
-            }
-            console.error("Error fetching comments");
-        } catch (error) {
-            console.error("Error fetching comments:", error);
-        }
-        return [];
-    }
+
+
+
+    // async function refreshComments(filterType) {
+    //     const comments = await fetchComments(filterType);
+    //     const commentSection = document.getElementById("commentSection");
+    //     commentSection.innerHTML = "";
+
+    //     comments.forEach((comment) => {
+    //         const commentHTML = `
+    //             <div class="col-md-6">
+    //                 <div class="card mb-3">
+    //                     <div class="card-body">
+    //                         <h5>${comment.user}</h5>
+    //                         <p class="card-text">${comment.komentar}</p>
+    //                     </div>
+    //                 </div>
+    //             </div>
+    //         `;
+    //         commentSection.innerHTML += commentHTML;
+    //     });
+    //     localStorage.setItem("currentFilterComments", filterType);
+    // }
+
+    // async function fetchComments(filterType) {
+    //     try {
+    //         const response = await fetch(`/filter-comments/${filterType}/`);
+    //         if (response.ok) {
+    //             const data = await response.json();
+    //             return data.comments;
+    //         }
+    //         console.error("Error fetching comments");
+    //     } catch (error) {
+    //         console.error("Error fetching comments:", error);
+    //     }
+    //     return [];
+    // }
 
     function filterComments(filterType) {
         if (currentFilterComments !== filterType) {
@@ -182,5 +196,7 @@
     }
     refreshComments(currentFilterComments);
 </script>
+
+<script type="text/javascript" src="{% static 'js/preview.js' %}"></script>
 
 {% endblock content %}

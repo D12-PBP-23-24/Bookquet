@@ -25,5 +25,5 @@ urlpatterns = [
     path('review/<int:book_id>/', add_rating_comment, name='add_rating_comment'),
     path('preview/json/<int:book_id>', recomendation_book, name="book_recomendation_json"),
     path('filter-comments/<str:filter_type>/', filter_comments, name='filter_comments'),
-    path('update-global-filter/', update_global_filter_settings, name='update_global_filter'),
+    path('update-global-filter/', update_global_filter_settings, name='update_global_filter_settings'),
 ]
