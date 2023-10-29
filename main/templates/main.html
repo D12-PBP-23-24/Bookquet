@@ -1,51 +1,16 @@
 {% extends 'base.html' %}
-{}
+{% load static %}
+
+{% block meta %}
+  <meta charset="UTF-8"/>
+  <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+  />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock meta %}
 
 {% block content %}
-  <style>
-    #hero-outer {
-      background-color:#defff2;
-    }
-    #hero-inner {
-      padding-top: 50px;
-      padding-bottom: 30px;
-    }
-    #search-outer {
-      background-color: #408558;
-    }
-    #search-button {
-      padding: 20px 10px 20px 10px;
-    }
-    #search-bg {
-      background: linear-gradient(
-        to top,
-        white 0%,
-        white 50%,
-        #defff2 50%,
-        #defff2 100%
-      );
-    }
-    .book {
-      padding: 10px 10px 10px 10px;
-    }
-    .hide {
-      display: none;
-    }
-    #add-book-judul {
-      background: linear-gradient(
-        to top,
-          #defff2 0%,
-          #defff2 50%,
-          white 50%,
-          white 100%
-      );
-    }
-    #add-book-isi {
-      background-color:#defff2;
-    }
-
-  </style>
-
   <header id="hero-outer" class="p-4 rounded-3">
     <div id="hero-inner" class="container">
       <h1 class="display-4 fw-bold"> 📕 Bookquet 💐 </h1>
@@ -206,99 +171,5 @@
     <!-- Copyright -->
   </footer>
 
-  <script>
-    function searchBook() {
-        const title = document.querySelector('#id_title').value;
-        const genre = document.querySelector('#id_genres').value;
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-        fetch("{% url 'main:find_book' %}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": csrfToken,
-            },
-            body: JSON.stringify({ title, genre }),
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            // Clear existing cards
-            const bukuDiv = document.getElementById('buku');
-            bukuDiv.innerHTML = '';
-
-            // Populate cards with the search results
-            data.books.forEach((book) => {
-                const card = document.createElement('div');
-                card.className = 'col';
-                card.innerHTML = `
-                    <div class="card h-100" data-genre="${ book.genres }">
-                      <a href="book-preview/preview/${ book.id }/" style="text-decoration: none; color: black;">
-                        <img src= ${ book.cover_img } class="card-img-top">
-                      </a>
-                      <div class="card-body">
-                        <h5 class="card-title fw-bold"> ${ book.title } </h5>
-                        <p class="card-text"><small class="text-body-secondary"> ${ book.author } </small></p>
-                        <p class="card-text"><small class="text-body-success border border-success rounded p-1"> ${ book.genres } </small></p>
-                      </div>
-                      <div class="card-footer text-muted"> <a href="read-later/add-to-read-later/${ book.id }/" style="text-decoration: none; color: black;"> <i class="bi bi-bookmark-plus"></i> Read Later </a> </div>
-                    </div>
-                `;
-                bukuDiv.appendChild(card);
-            });
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-    }
-
-    document.getElementById("button_add").addEventListener('click', function (event) {
-        event.preventDefault(); // Prevent default form submission
-        searchBook(); // Call the searchBook function
-    });
-
-    document.getElementById("form").addEventListener("keydown", function (event) {
-      if (event.key === "Enter") {
-        event.preventDefault(); // Prevent the default form submission action
-      }
-    });
-
-    // Function to enable the search feature
-    function enableSearchFeature() {
-      const searchInner  = document.querySelector('#search-inner');
-      
-      searchInner.innerHTML = `
-        <p class="fw-bold p-2 flex-grow-1" style="color: white; margin: auto;" id="search-prompt"> Cari buku? </p>
-        <a class="btn btn-outline-light" type="button" id="find-button"data-bs-toggle="modal" data-bs-target="#findBookModal"> <i class="bi bi-search"></i> </a>
-      `;
-    }
-
-    // Function to disable the search feature
-    function disableSearchFeature() {
-      const searchInner = document.querySelector('#search-inner');
-
-      searchInner.innerHTML = `
-        <p class="fw-bold p-2 flex-grow-1" style="color: white; margin: auto;" id="search-prompt"> Mohon maaf, fitur pencarian sedang dinonaktifkan </p>
-      `;
-    }
-
-    // Event listener for the switch button
-    document.getElementById('flexSwitchCheckChecked').addEventListener('change', function () {
-      if (this.checked) {
-        fetch("{% url 'main:toggle_search_feature' %}", { method: 'POST' });
-        enableSearchFeature();
-      } else {
-        fetch("{% url 'main:toggle_search_feature' %}", { method: 'POST' });
-        disableSearchFeature();
-      }
-    });
-
-    document.getElementById('')
-  </script>
-
-{% endblock %}
+  <script type="text/javascript" src="{% static '/js/main.js' %}"></script>
+{% endblock content %}

@@ -12,7 +12,7 @@ urlpatterns = [
     path('login/', login_user, name='login'),
     path('logout/', logout_user, name='logout'),
     path('read-later/add-to-read-later/<int:book_id>/', read_later_book, name="read_later_book"),
-    path('toggle_search_feature/', toggle_search_feature, name='toggle_search_feature'),
+    path('toggle-search-feature/', toggle_search_feature, name='toggle_search_feature'),
 ]
 
 
