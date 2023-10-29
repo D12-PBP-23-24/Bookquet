@@ -17,18 +17,20 @@
 
     <div class="btn-group" role="group" aria-label="Priority Filter" style="display: flex; justify-content: center; margin: 20px 0;">
         <div class="btn-group" role="group" aria-label="Priority Filter">
-            <a href="#" onclick="refreshProducts('all'); return false;" class="btn btn-secondary">All</a>
-            <a href="#" onclick="refreshProducts('low'); return false;" class="btn btn-secondary">Low</a>
-            <a href="#" onclick="refreshProducts('medium'); return false;" class="btn btn-secondary">Medium</a>
-            <a href="#" onclick="refreshProducts('high'); return false;" class="btn btn-secondary">High</a>
+            <a href="#" class="btn btn-secondary">All</a>
+            <a href="#" class="btn btn-secondary">Low</a>
+            <a href="#" class="btn btn-secondary">Medium</a>
+            <a href="#" class="btn btn-secondary">High</a>
         </div>
     </div>
+    
     
     <div id="info" style="display: flex; justify-content: center; align-items: center;"> </div>
     <div class="row" id="item_card"> </div> 
 
 </div>
 </div>
+
 
 <script>
     let currentPriority = "all";
@@ -55,7 +57,7 @@
                             <p class="card-text d-inline" style="border: 1px solid #28a745; border-radius: 5px; padding: 0.5rem;">${item.genres}</p>
                         </div>
                         {% if is_admin %}
-                            <button onclick="adjustPriority(${item.id});" class="btn btn-warning mb-2">Increment Priority</button>
+                            <button onclick="adjustPriority(${item.id});" class="btn btn-warning mb-2">Update Priority</button>
                         {% endif %}
                         <button onclick="deleteItem(${item.id});" class="btn btn-danger">Remove from Read Later</button>
                     </div>
@@ -109,4 +111,4 @@
 
 </script>
 
-{% endblock %}
+{% endblock content %}
