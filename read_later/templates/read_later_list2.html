@@ -12,6 +12,7 @@
         </div>
     </div>
 
+    <p class="text-center lead"> Sesi terakhir login: {{ last_login }} </p>
 
     <div class="btn-group" role="group" aria-label="Priority Filter" style="display: flex; justify-content: center; margin: 20px 0;">
         <div class="btn-group" role="group" aria-label="Priority Filter">
@@ -52,6 +53,9 @@
                         <div class="mb-auto">
                             <p class="card-text d-inline" style="border: 1px solid #28a745; border-radius: 5px; padding: 0.5rem;">${item.genres}</p>
                         </div>
+                        {% if is_admin %}
+                            <button onclick="adjustPriority(${item.id});" class="btn btn-warning mb-2">Increment Priority</button>
+                        {% endif %}
                         <button onclick="deleteItem(${item.id});" class="btn btn-danger">Remove from Read Later</button>
                     </div>
                 </div>
@@ -81,7 +85,27 @@
         } catch (error) {
             console.error('Error:', error);
         }
-}
+    }
+    async function adjustPriority(itemId) {
+        const adjustUrl = `{% url 'read_later:adjust_priority_ajax' item_id='999' %}`.replace('999', itemId);
+        try {
+            const response = await fetch(adjustUrl, {
+                method: 'PUT',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+
+            if (response.ok) {
+                refreshProducts(currentPriority);
+            } else {
+                console.error('Failed to adjust priority. Server responded with:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
 </script>
 
 {% endblock %}

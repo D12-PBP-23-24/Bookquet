@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Book, UserProfile, QuoteOfDay
+from .models import Book, UserProfile
 
 class UserProfileForm(UserCreationForm):
     nickname = forms.CharField(required=True)
@@ -35,10 +35,5 @@ class AddBookForm(forms.ModelForm):
 
     title  = forms.CharField(widget = forms.TextInput( attrs = { 'class': 'form-control', }), required = False)
     genres = forms.ChoiceField(widget = forms.Select( attrs = { 'class': 'form-control', }), choices = GENRE_CHOICES, required = True)
-
-class QuoteOfDayForm(forms.ModelForm):
-    class Meta:
-        model = QuoteOfDay
-        fields = ['quote_text', 'author']
         
         

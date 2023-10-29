@@ -10,20 +10,29 @@ from django.contrib.auth.decorators import login_required
 import json
 import datetime
 
-from main.models        import Book, UserProfile
+from main.models        import Book, SearchFeatureStatus
 from main.forms         import UserProfileForm, AddBookForm
 from read_later.views   import add_to_read_later
-from .models            import QuoteOfDay
-from .forms             import QuoteOfDayForm
 
 def show_main(request):
     form = AddBookForm(request.POST or None)
     books = Book.objects.all()
+
+    for book in books:
+        book.average_rate = book.average_rate // 1
+
+    status, created = SearchFeatureStatus.objects.get_or_create(id = 1)
+    
     context = {
-        'books': books,
-        'form': form,
-        'name' : request.user.username,
+        'books'     : books,
+        'form'      : form,
+        'name'      : request.user.username,
+        'status'    : status.enabled
     }
+
+    if request.user.is_authenticated:
+        context['last_login'] = request.COOKIES['last_login']
+    
     return render(request, "main.html", context)
 
 def get_books(request):
@@ -96,7 +105,6 @@ def login_user(request):
 
 @login_required
 def logout_user(request):
-    print('test')
     logout(request)
     response = HttpResponseRedirect(reverse('main:show_main'))
     response.delete_cookie('last_login')
@@ -121,3 +129,17 @@ def find_book(request):
 @login_required
 def read_later_book(request, book_id):
     return add_to_read_later(request=request, book_id=book_id)
+
+@login_required
+@csrf_exempt
+def toggle_search_feature(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        # Get the current status or create one if it doesn't exist
+        status, created = SearchFeatureStatus.objects.get_or_create(id = 1)
+
+        # Toggle the status
+        status.enabled = not status.enabled
+        status.save()
+
+        return JsonResponse({'enabled': status.enabled})
+    return JsonResponse({'error': 'Not authorized to toggle the feature status'})

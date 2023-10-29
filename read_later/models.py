@@ -5,11 +5,6 @@ from django.db import models
 from main.models import Book
 from django.contrib.auth.models import User
 
-class Comment(models.Model):
-  komentar    = models.TextField(null=True)
-  buku        = models.ForeignKey(Book, on_delete=models.CASCADE)
-  user        = models.ForeignKey(User, on_delete=models.CASCADE)
-
 class ReadLaterBooks(models.Model):
     PRIORITY_CHOICES = [
         ('low', 'Low Priority'),
