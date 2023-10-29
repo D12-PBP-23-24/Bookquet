@@ -33,8 +33,7 @@
                     <li class="nav-item active">
                         {% if user.is_authenticated %}
                             {% if user.is_staff %}
-                                {% comment %} Ini modul Carrisa {% endcomment %}
-                                <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'main:login' %}">
+                                <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'adminpage:show_dashboard' %}">
                                     <i class="bi bi-person-fill-lock"></i>
                                 </a>
                             {% else %}
@@ -43,18 +42,15 @@
                                 </a>
                             {% endif %}
 
-                            {% comment %} Fitur Read Later {% endcomment %}
                             <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'read_later:read_later_list' %}">
                                 <i class="bi bi-journal-bookmark-fill"></i>
                             </a>
 
-                            {% comment %} Fitur Logout {% endcomment %}
                             <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'main:logout_user' %}">
                                 <i class="bi bi-box-arrow-right"></i>
                             </a>
-                            
+
                         {% else %}
-                            {% comment %} Fitur Login {% endcomment %}
                             <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'main:login' %}">
                                 <i class="bi bi-door-open-fill"></i>
                             </a>

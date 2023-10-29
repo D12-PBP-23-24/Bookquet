@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .hero-container {
+        display: flex;
+        flex-direction: column;
+        height: 30vh;
+        background-color: #defff2;
+    }
+
+    .profile-header {
+        padding: 100px;
+        text-align: center;
+    }
+</style>
+
+<div class="hero-container">
+    <div class="profile-header">
+        <h1 class="display-4 fw-bold">Admin Profile</h1>
+    </div>
+
+</div>
+<div class="d-flex align-items-center justify-content-center">
+    <div class="container text-center">
+        <ul class="list-group mb-4">
+            <li class="list-group-item">
+                <span class="fw-bold">Email : </span> <span id="nickname"> {{user.email}} </span>
+            </li>
+            <li class="list-group-item">
+                <span class="fw-bold">Username : </span> <span id="Username"> {{user.username}} </span>
+            </li>
+        </ul>
+        <button type="button" class="btn btn-success" id="editProfileButton">
+            Edit Profile
+        </button>
+
+        <div id="quote-of-the-day" style="margin-top: 40px; margin-bottom: 40px;">
+            <h1>Quote of the Day</h1>
+            <p id="quote-text"></p>
+            <p id="quote-author"></p>
+            <a href="{% url 'adminpage:edit_quote_of_the_day' %}" class="btn btn-primary" data-url="{% url 'adminpage:manage_quote_of_the_day' %}">Edit</a>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="modal" id="ProfileModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Profile</h5>
+                <button type="button" class="btn-close" id="cancelButton" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form">
+                    {% csrf_token %}
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="inputNickname" placeholder="name">
+                        <label for="nickname">Nickname</label>
+                      </div>
+                      <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="inputUsername" placeholder="username">
+                        <label for="username">Username</label>
+                      </div>
+                      <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="inputAge" placeholder="age">
+                        <label for="age">Age</label>
+                      </div>
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="inputPhone" placeholder="phone number">
+                        <label for="phone">Phone Number</label>
+                      </div>
+                     <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="inputRegion" placeholder="region">
+                        <label for="region">Region</label>
+                      </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" id="button_edit">Save</button>
+            </div>
+        </div> 
+    </div>
+</div>
+
+  
+<br>
+
+<script>
+    async function getProfile() {
+        const response = await fetch("{% url 'adminpage:get_profile_json' %}");
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById("nickname").textContent = data.nickname;
+            document.getElementById("username").textContent = data.username;
+            document.getElementById("age").textContent = data.age;
+            document.getElementById("phone").textContent = data.phone;
+            document.getElementById("region").textContent = data.region;
+        } else {
+            console.error("Failed to fetch profile data");
+        }
+    }
+
+    getProfile();
+
+
+    async function editProfile() {
+        fetch("{% url 'adminpage:edit_profile_ajax' %} %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        }).then(() => {
+            getProfile();
+            document.getElementById("form").reset(); 
+            $('#ProfileModal').modal('hide');
+        });
+        return false;
+    }
+
+
+    document.getElementById("button_edit").onclick = editProfile;
+
+    document.getElementById("editProfileButton").onclick = function () {
+        getProfile();
+        $('#ProfileModal').modal('show');
+    };
+
+    document.getElementById("cancelButton").onclick = function () {
+        $('#ProfileModal').modal('hide');
+    };
+
+    $('#ProfileModal').on('hidden.bs.modal', function (e) {
+        document.getElementById("form").reset();
+    });
+
+    getProfile();
+
+    function loadQuoteOfTheDay() {
+    const editButton = document.querySelector('[data-url]');
+        const quoteOfTheDayURL = editButton.getAttribute('data-url');
+
+        fetch(quoteOfTheDayURL)
+            .then(response => {
+                if (!response.ok) {
+                    console.error(`Network response was not ok: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);  // Tambahkan ini untuk melihat data yang diambil
+                // Perbarui tampilan dengan kutipan dan penulis
+                
+                document.getElementById('quote-text').textContent = data.quote_text;
+                document.getElementById('quote-author').textContent = '- ' + data.author;
+            })
+            .catch(error => {
+                console.error(error);  // Tambahkan ini untuk melihat pesan kesalahan
+                document.getElementById('quote-of-the-day').innerHTML = 'Terjadi kesalahan saat mengambil Quote of the Day.';
+            });
+    }
+
+
+// Panggil fungsi saat halaman dimuat
+{% comment %} document.addEventListener("DOMContentLoaded", function () {
+    loadQuoteOfTheDay();
+}); {% endcomment %}
+
+
+</script>
+{% endblock content %}

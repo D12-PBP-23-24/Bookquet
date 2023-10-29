@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
 from main.models import Book
-from read_later.models import ReadLaterBooks, Comment
+from read_later.models import ReadLaterBooks
 
 class ReadLaterTestCase(TestCase):
 

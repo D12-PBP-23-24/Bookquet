@@ -19,5 +19,12 @@ class UserProfile(User):
   age       = models.IntegerField()
   region    = models.TextField()
 
+class QuoteOfDay(models.Model):
+    quote_text = models.TextField()
+    author = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.quote_text
+
 class SearchFeatureStatus(models.Model):
   enabled = models.BooleanField(default=True)

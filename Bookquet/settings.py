@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "main",
     "book_preview",
+    "adminpage",
     "read_later",
     "dashboard",
 ]
