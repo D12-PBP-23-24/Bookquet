@@ -1,0 +1,40 @@
+#hero-outer {
+    background-color:#defff2;
+}
+#hero-inner {
+    padding-top: 50px;
+    padding-bottom: 30px;
+}
+#search-outer {
+    background-color: #408558;
+}
+#search-button {
+    padding: 20px 10px 20px 10px;
+}
+#search-bg {
+    background: linear-gradient(
+    to top,
+    white 0%,
+    white 50%,
+    #defff2 50%,
+    #defff2 100%
+    );
+}
+.book {
+    padding: 10px 10px 10px 10px;
+}
+.hide {
+    display: none;
+}
+#add-book-judul {
+    background: linear-gradient(
+    to top,
+        #defff2 0%,
+        #defff2 50%,
+        white 50%,
+        white 100%
+    );
+}
+#add-book-isi {
+    background-color:#defff2;
+}

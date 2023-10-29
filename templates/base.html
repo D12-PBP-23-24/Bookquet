@@ -18,8 +18,8 @@
         <style>
             body {
                 padding-top: 40px;
-                padding-bottom: 70px;
             }
+            
         </style>
     </head>
 
@@ -28,7 +28,7 @@
         {% comment %} Navigation Bar {% endcomment %}
         <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-success">
             <div class="container">
-                <a href="" class="navbar-brand mb-0 h1"> <i class="bi bi-flower1"></i> Bookquet </a>
+                <a href="{% url 'main:show_main' %}" class="navbar-brand mb-0 h1"> <i class="bi bi-flower1"></i> Bookquet </a>
 
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item active">
@@ -40,16 +40,16 @@
                             </a>
 
                             {% comment %} Fitur Read Later {% endcomment %}
-                            <a type="button" class="btn btn-outline-light btn-sm">
+                            <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'read_later:read_later_list' %}">
                                 <i class="bi bi-journal-bookmark-fill"></i>
                                 {% comment %} TODO: Tambahin URL read later {% endcomment %}
                             </a>
 
                             {% comment %} Fitur Logout {% endcomment %}
-                            <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'main:logout' %}">
+                            <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'main:logout_user' %}">
                                 <i class="bi bi-box-arrow-right"></i>
-                                {% comment %} TODO: Tambahin URL logout {% endcomment %}
                             </a>
+                            
                         {% else %}
                             {% comment %} Fitur Login {% endcomment %}
                             <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'main:login' %}">
@@ -59,11 +59,51 @@
                         {% endif %}
                     </li>
                 </ul>
-
             </div>
         </nav>
 
         {% block content %}
         {% endblock content %}
+        
+        <footer class="bg-light text-center text-lg-start">
+            <!-- Grid container -->
+            <div class="container p-4">
+              <!--Grid row-->
+              <div class="row">
+                <!--Grid column-->
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                  <h5 class="fw-bold"> 📕 Bookquet 💐 </h5>
+          
+                  <p>
+                    Sebuah aplikasi inovatif yang menghadirkan literasi ke dalam pengalaman baru.
+                    Lebih dari sekadar perpustakaan pribadi, Bookquet memanjakan pengguna melalui fitur penyimpanan buku yang akan dibaca nanti.
+                    Selain itu, pengguna dapat memberikan ulasan mengenai buku yang sudah dibaca.
+                  </p>
+                </div>
+                <!--Grid column-->
+          
+                <!--Grid column-->
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                  <h5 class="fw-bold"> 👥 Kelompok D-12 👥</h5>
+          
+                  <p>
+                    Proyek ini dibuat untuk memenuhi tugas Proyek Tengah Semester (PTS) pada mata kuliah
+                    Pemrograman Berbasis Platform (CSGE602022) yang diselenggarakan oleh Fakultas Ilmu Komputer, 
+                    Universitas Indonesia Tahun Ajaran 2023/2024 Semester Gasal.
+                  </p>
+                </div>
+                <!--Grid column-->
+              </div>
+              <!--Grid row-->
+            </div>
+            <!-- Grid container -->
+          
+            <!-- Copyright -->
+            <div class="text-center p-3 text-light" style="background-color: #408558;">
+              Copyright © 2023 D-12
+            </div> 
+            <!-- Copyright -->
+        </footer>
+
     </body>
 </html>

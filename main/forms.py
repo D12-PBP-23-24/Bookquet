@@ -35,3 +35,5 @@ class AddBookForm(forms.ModelForm):
 
     title  = forms.CharField(widget = forms.TextInput( attrs = { 'class': 'form-control', }), required = False)
     genres = forms.ChoiceField(widget = forms.Select( attrs = { 'class': 'form-control', }), choices = GENRE_CHOICES, required = True)
+        
+        

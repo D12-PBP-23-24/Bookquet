@@ -1,51 +1,16 @@
 {% extends 'base.html' %}
-{}
+{% load static %}
+
+{% block meta %}
+  <meta charset="UTF-8"/>
+  <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+  />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock meta %}
 
 {% block content %}
-  <style>
-    #hero-outer {
-      background-color:#defff2;
-    }
-    #hero-inner {
-      padding-top: 50px;
-      padding-bottom: 30px;
-    }
-    #search-outer {
-      background-color: #408558;
-    }
-    #search-button {
-      padding: 20px 10px 20px 10px;
-    }
-    #search-bg {
-      background: linear-gradient(
-        to top,
-        white 0%,
-        white 50%,
-        #defff2 50%,
-        #defff2 100%
-      );
-    }
-    .book {
-      padding: 10px 10px 10px 10px;
-    }
-    .hide {
-      display: none;
-    }
-    #add-book-judul {
-      background: linear-gradient(
-        to top,
-          #defff2 0%,
-          #defff2 50%,
-          white 50%,
-          white 100%
-      );
-    }
-    #add-book-isi {
-      background-color:#defff2;
-    }
-
-  </style>
-
   <header id="hero-outer" class="p-4 rounded-3">
     <div id="hero-inner" class="container">
       <h1 class="display-4 fw-bold"> 📕 Bookquet 💐 </h1>
@@ -58,41 +23,91 @@
           <cite title="Source Title">J.K. Rowling</cite>
         </figcaption>
       </figure>
+      
       {% if user.is_authenticated %}
         <p class="display-6 text-center fw-bold"> Selamat datang {{ name }}! 👋🏻 </p>
+        <p class="text-center lead"> Sesi terakhir login: {{ last_login }} </p>
       {% endif %}
     </div>
   </header>
 
   <div id="search-bg">
     <div id="search-outer" class="container rounded-pill w-75"> 
-      <div class="d-flex" style="padding: 10px 10px 10px 10px;">
-        <p class="fw-bold p-2 flex-grow-1" style="color: white; margin: auto;"> Cari buku? </p> 
-        <a class="btn btn-outline-light" type="button" id="find-button" data-bs-toggle="modal" data-bs-target="#findBookModal"> <i class="bi bi-search"></i> </a>
+      <div id="search-inner" class="d-flex" style="padding: 10px 10px 10px 10px;">
+        {% if status %}
+          <p class="fw-bold p-2 flex-grow-1" style="color: white; margin: auto;" id="search-prompt"> Cari buku? </p>
+          <a class="btn btn-outline-light" type="button" id="find-button"data-bs-toggle="modal" data-bs-target="#findBookModal"> <i class="bi bi-search"></i> </a>
+        {% else %}
+          <p class="fw-bold p-2 flex-grow-1" style="color: white; margin: auto;" id="search-prompt"> Mohon maaf, fitur pencarian sedang dinonaktifkan </p>
+        {% endif %}
       </div>
     </div>
   </div>
+
+  <br>
+  {% if user.is_staff %}
+    <p class="container lead text-center"> Fitur favorit tidak tersedia dalam mode pencarian </p>
+  {% endif %}
   <br>
 
-  <h4 class="container d-flex justify-content-center fw-bold"> 📚 Daftar Buku 📚 </h4>
+  {% if user.is_staff %}
+    <h2 class="container d-flex justify-content-center fw-bold"> 🧑‍💻 Pojok Admin 👩‍💻 </h2>
+    <div class="containter d-flex justify-content-center fw-bold">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" {% if status %} checked {% endif %}>
+        <label class="form-check-label" for="flexSwitchCheckChecked"> Fitur Search </label>
+      </div>
+    </div>
+  {% endif %}
+          
+  <br>
+
+  <h2 class="container d-flex justify-content-center fw-bold"> 📚 Daftar Buku 📚 </h2>
 
   <br>
   <div class="container">
+    <input type="hidden" id="user-id" value="{{user.pk}}">
     <div class="container">
       <div class="row row-cols-2 row-cols-md-4 g-4" id="buku">
         {% for book in books %}
           <div class="col">
             <div class="card h-100" data-genre="{{ book.genres }}">
-              <img src= {{ book.cover_img }} class="card-img-top">
+              <div class="card-header d-flex justify-content-center">
+                <div class="p-1 w-100">
+                  {% with ''|center:5 as range %}
+                    {% for i in range %}  
+                        {% if forloop.counter0 < book.average_rate %}
+                          <i class="bi bi-star-fill"></i>
+                        {% else %}
+                          <i class="bi bi-star"></i>
+                        {% endif %}
+                    {% endfor %}
+                  {% endwith %}
+                </div>
+
+                <div class="p-1 flex-shrink-1">
+                  {% if user.is_staff %}
+                    <a type="button" class="favorite-button" style="text-decoration: none; color: black;" data-book-id="{{ book.id }}">
+                      {% if user in book.favorites.all %}
+                        <i class="bi bi-heart-fill"></i>
+                      {% else %}
+                        <i class="bi bi-heart"></i>
+                      {% endif %}
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+
+              <a href="{% url 'book_preview:show_preview' book.pk %}" style="text-decoration: none; color: black;">
+                <img src= {{ book.cover_img }} class="card-img-top">
+              </a>
               <div class="card-body">
                 <h5 class="card-title fw-bold"> {{ book.title }} </h5>
                 <p class="card-text"><small class="text-body-secondary"> {{ book.author }} </small></p>
                 <p class="card-text"><small class="text-body-success border border-success rounded p-1"> {{ book.genres }} </small></p>
               </div>
-              <!-- <a href="#" class="stretched-link"></a> -->
-
               {% if user.is_authenticated %}
-                <div class="card-footer text-muted"> <a class = "btn btn-secondary" href='read-later/add-to-read-later/{{book.id}}/'> <i class="bi bi-bookmark-plus"> </i> Read Later </a> </div> 
+                <div class="card-footer text-muted"> <a href="read-later/add-to-read-later/{{ book.id }}/" style="text-decoration: none; color: black;"> <i class="bi bi-bookmark-plus"></i> Read Later </a> </div>
               {% endif %}
             </div>
           </div>
@@ -132,68 +147,65 @@
     </div>
   </div>
 
-  <script>
-    function searchBook() {
-        const title = document.querySelector('#id_title').value;
-        const genre = document.querySelector('#id_genres').value;
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  <br>
+  
+  <footer class="bg-light text-center text-lg-start">
+    <!-- Grid container -->
+    <div class="container p-4">
+      <!--Grid row-->
+      <div class="row">
+        <!--Grid column-->
+        <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+          <h5 class="fw-bold"> 📕 Bookquet 💐 </h5>
+  
+          <p>
+            Sebuah aplikasi inovatif yang menghadirkan literasi ke dalam pengalaman baru.
+            Lebih dari sekadar perpustakaan pribadi, Bookquet memanjakan pengguna melalui fitur penyimpanan buku yang akan dibaca nanti.
+            Selain itu, pengguna dapat memberikan ulasan mengenai buku yang sudah dibaca.
+          </p>
+        </div>
+        <!--Grid column-->
+  
+        <!--Grid column-->
+        <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+          <h5 class="fw-bold"> 👥 Kelompok D-12 👥</h5>
+  
+          <p>
+            Proyek ini dibuat untuk memenuhi tugas Proyek Tengah Semester (PTS) pada mata kuliah
+            Pemrograman Berbasis Platform (CSGE602022) yang diselenggarakan oleh Fakultas Ilmu Komputer, 
+            Universitas Indonesia Tahun Ajaran 2023/2024 Semester Gasal.
+          </p>
+        </div>
+        <!--Grid column-->
+      </div>
+      <!--Grid row-->
+    </div>
+    <!-- Grid container -->
+  
+    <!-- Copyright -->
+    <div class="text-center p-3 text-light" style="background-color: #408558;">
+      Copyright © 2023 D-12
+    </div> 
+    <!-- Copyright -->
+  </footer>
 
-        fetch("{% url 'main:find_book' %}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": csrfToken,
-            },
-            body: JSON.stringify({ title, genre }),
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            // Clear existing cards
-            const bukuDiv = document.getElementById('buku');
-            bukuDiv.innerHTML = '';
+  {% if user.is_authenticated %}
+    <script>
+      var userAuthenticated = true;
+    </script>
+  {% else %}
+    <script>
+      var userAuthenticated = false;
+    </script>
+  {% endif %}
 
-            // Populate cards with the search results
-            data.books.forEach((book) => {
-                const card = document.createElement('div');
-                card.className = 'col';
-                card.innerHTML = `
-                    <div class="card h-100" data-genre="${book.genres}">
-                        <img src="${book.cover_img}" class="card-img-top">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">${book.title}</h5>
-                            <p class="card-text"><small class="text-body-secondary">${book.author}</small></p>
-                            <p class="card-text"><small class="text-body-success border border-success rounded p-1">${book.genres}</small></p>
-                        </div>
-                        <a href="#" class="stretched-link"></a>
-                        {% if user.is_authenticated %}
-                          <div class="card-footer text-muted"> <i class="bi bi-bookmark-plus"></i> Read Later </div>
-                        {% endif %}
-                    </div>
-                `;
-                bukuDiv.appendChild(card);
-            });
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-    }
+  {% comment %} <script>
+    window.myApp = {
+      user : {{user|safe}},
+      isAdmin : {{ isAdmin|yesno:"true,false"}}
+    };
+  </script> {% endcomment %}
 
-    document.getElementById("button_add").addEventListener('click', function (event) {
-        event.preventDefault(); // Prevent default form submission
-        searchBook(); // Call the searchBook function
-    });
+  <script type="text/javascript" src="{% static '/js/main.js' %}"></script>
 
-    document.getElementById("form").addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        e.preventDefault(); // Prevent the default form submission action
-      }
-    });
-  </script>
-
-{% endblock %}
+{% endblock content %}
