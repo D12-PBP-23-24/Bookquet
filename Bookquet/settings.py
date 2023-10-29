@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-
+LOGIN_URL = 'main:login'
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,8 +39,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "main",
     "dashboard",
-    "adminpage",
-    "authentication",
 ]
 
 MIDDLEWARE = [

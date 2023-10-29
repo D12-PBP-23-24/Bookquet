@@ -1,179 +1,136 @@
-{% extends 'dashboard_base.html' %}
-
-{% block content %}
+{% extends 'dashboard_base.html' %} {% block content %}
 
 <style>
-    .hero-container {
-        display: flex;
-        flex-direction: column;
-        height: 40vh;
-        background-color: #defff2;
-    }
+  .hero-container {
+    display: flex;
+    flex-direction: column;
+    height: 40vh;
+    background-color: #defff2;
+  }
 
-    .profile-header {
-        padding: 100px;
-        text-align: center;
-    }
+  .profile-header {
+    padding: 100px;
+    text-align: center;
+  }
 </style>
 
 <div class="hero-container">
-    <div class="profile-header">
-        <h1 class="display-4">User Profile</h1>
-    </div>
-    <div class="d-flex align-items-center justify-content-center">
-        <div class="container text-center">
-            <ul class="list-group mb-4">
-                <li class="list-group-item">
-                    <span class="fw-bold">Nickname : </span> <span id="nickname">{{profile.nickname}}</span>
-                </li>
-                <li class="list-group-item">
-                    <span class="fw-bold">Username : </span> <span id="username">{{username}}</span>
-                </li>
-                <li class="list-group-item">
-                    <span class="fw-bold">Age : </span> <span id="age">{{profile.age}}</span>
-                </li>
-                <li class="list-group-item">
-                    <span class="fw-bold">Phone Number : </span> <span id="phone">{{profile.phone}}</span>
-                </li>
-                <li class="list-group-item">
-                    <span class="fw-bold">Region : </span> <span id="region">{{profile.region}}</span>
-                </li>
-            </ul>
-        </div>
-    </div>
+  <div class="profile-header">
+    <h1 class="display-4">User Profile</h1>
+    <h3>hello, {{user.username}} !</h3>
+  </div>
 </div>
-
 
 <div class="justify-content-center">
-    <div class="container text-center" id="information"></div>
+  <div class="container text-center" id="information"></div>
 </div>
-<div class="text-center" style="margin-top: 200px;">
-    <button type="button" class="btn btn-success" id="editProfileButton">
-        Edit Profile
-    </button>
+<div class="text-center">
+  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#ProfileModal">
+    Edit Profile
+  </button>
 </div>
-<br>
+<br />
 
-<h3 class="container text-center">Buku yang sudah di review : </h3>
+<h3 class="container text-center">Buku yang sudah di review :</h3>
 
-
+<ul class="list-group">
+  {% for book in books_reviewed %}
+  <li class="list-group-item">
+    <span class="fw-bold">Judul: {{ book.title }}</span><br />
+    <span class="fw-bold">{{ book.cover_img }}</span><br />
+  </li>
+  {% empty %}
+  <p>-</p>
+  {% endfor %}
+</ul>
 
 <div class="modal" id="ProfileModal">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit Profile</h5>
-                <button type="button" class="btn-close" id="cancelButton" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="form">
-                    {% csrf_token %}
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="editnickname" value="{{ profile.nickname }}">
-                        <label for="editnickname">Nickname</label>
-                      </div>
-                      <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="editusername" value="{{ profile.username }}">
-                        <label for="editusername">Username</label>
-                      </div>
-                      <div class="form-floating mb-3">
-                        <input type="number" class="form-control" id="editage" value="{{ profile.age }}">
-                        <label for="editage">Age</label>
-                      </div>
-                    <div class="form-floating mb-3">
-                        <input type="number" class="form-control" id="editphone" value="{{ profile.phone }}">
-                        <label for="editphone">Phone Number</label>
-                      </div>
-                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="editregion" value="{{ profile.region }}">
-                        <label for="editregion">Region</label>
-                      </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-success" id="button_edit">Save</button>
-            </div>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form action="{% url 'dashboard:edit_profile_ajax' %}" method="post" id="editForm">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Profile</h5>
+          <button type="button" class="btn-close" id="cancelButton" aria-label="Close" ></button>
         </div>
+        <div class="modal-body">
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="editnickname" name="nickname" value="{{ profile.nickname }}"/>
+            <label for="editnickname">Nickname</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="editage" name="age" value="{{ profile.age }}" min="0"/>
+            <label for="editage">Age</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="editphone" name="phone" value="{{ profile.phone }}" min="0" />
+            <label for="editphone">Phone Number</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="editregion" name="region" value="{{ profile.region }}" />
+            <label for="editregion">Region</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-success">Save</button>
+        </div>
+      </form>
     </div>
-    
+  </div>
 </div>
 
-
-
 <script>
-    async function getProfile() {
-        return fetch("{% url 'dashboard:get_profile_json' %}").then((res) => res.json()); 
-    }
 
-    async function refreshProfile() {
-        const profile = await getProfile();
-        const informationContainer = document.getElementById("information");
-        informationContainer.innerHTML = "";
+  $(document).ready(() => { refreshProfile();});
 
-        const htmlString = `
-            <div class="container text-center">
-                <ul class="list-group mb-4">
-                    <li class="list-group-item">
-                        <span class="fw-bold">Nickname : </span> <span id="nickname">${profile.nickname}</span> 
-                    </li>
-                    <li class="list-group-item">
-                        <span class="fw-bold">Username : </span> <span id="username">${profile.username}</span>
-                    </li>
-                    <li class="list-group-item">
-                        <span class="fw-bold">Age : </span> <span id="age">${profile.age}</span>
-                    </li>
-                    <li class="list-group-item">
-                        <span class="fw-bold">Phone Number : </span> <span id="phone">${profile.phone}</span>
-                    </li>
-                    <li class="list-group-item">
-                        <span class="fw-bold">Region : </span> <span id="region">${profile.region}</span>
-                    </li>
-                </ul>
-            </div>`;
+  async function getProfile() {
+    return fetch("{% url 'dashboard:get_profile_json' %}").then((res) => res.json());
+  }
 
-        informationContainer.innerHTML = htmlString;
-    }
+  async function refreshProfile() {
+    const profile = await getProfile();
+    const informationContainer = document.getElementById("information");
+    informationContainer.innerHTML = "";
 
-    refreshProfile()
+    const htmlString = `
+        <div class="container text-center" style="margin-top: 20px;">
+            <ul class="list-group mb-4 border rounded">
+                <li class="list-group-item border-0" >
+                    <span class="fw-bold">Nickname : </span> <span id="nickname">${profile.nickname}</span> 
+                </li>
+                <li class="list-group-item border-0">
+                    <span class="fw-bold">Age : </span> <span id="age">${profile.age}</span>
+                </li>
+                <li class="list-group-item border-0">
+                    <span class="fw-bold">Phone Number : </span> <span id="phone">${profile.phone}</span>
+                </li>
+                <li class="list-group-item border-0">
+                    <span class="fw-bold">Region : </span> <span id="region">${profile.region}</span>
+                </li>
+            </ul>
+        </div>`;
 
-    async function editProfile() {
-        const ageInput = document.getElementById("editage");
-        const phoneInput = document.getElementById("editphone");
+    informationContainer.innerHTML = htmlString;
+  }
 
-        if (!/^\d+$/.test(ageInput.value) || !/^\d+$/.test(phoneInput.value)) {
-            alert("Age and Phone Number must be numbers");
-            return;
-        }
-        
-        fetch("{% url 'dashboard:edit_profile_ajax' %}", {
-            method: "POST",
-            body: new FormData(document.querySelector('#form'))
-        }).then(() => {
-            refreshProfile();
-            document.getElementById("form").reset(); 
-            $('#ProfileModal').modal('hide');
-        });
-        return false;
-    }
+  $("#editForm").submit(function (event) {
+    event.preventDefault();
 
-
-    document.getElementById("button_edit").onclick = editProfile;
-
-
-    document.getElementById("editProfileButton").onclick = function () {
+    $.ajax({
+      type: "POST", url: $(this).prop("action"), data: $(this).serialize(),
+      success: function (response) {
         refreshProfile();
-        $('#ProfileModal').modal('show');
-    };
-
-    document.getElementById("cancelButton").onclick = function () {
-        $('#ProfileModal').modal('hide');
-    };
-
-    $('#ProfileModal').on('hidden.bs.modal', function (e) {
-        document.getElementById("form").reset();
+        // alert(response.message);
+        if (response.status == "error") console.log(response.errors);
+        $("#ProfileModal").modal("hide");
+      },
+      error: function (xhr, errmsg, err) {
+        console.log(xhr.status + ": " + xhr.responseText);
+      },
     });
-
-    refreshProfile();
+  });
 </script>
 {% endblock content %}
