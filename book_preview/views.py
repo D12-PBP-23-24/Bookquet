@@ -2,29 +2,47 @@ from django.shortcuts import render
 from main.models import Book
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from book_preview.models import Comment, Rate
+from book_preview.models import Comment, Rate, Filter
 from .forms import RateForm, CommentForm
 from .utils import calculate_new_average_rating
-from django.shortcuts import redirect
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse
 import json
 from django.http import JsonResponse
-from django.core import serializers
+from random import sample
 
 def show_preview(request, book_id):
-    book = Book.objects.get(pk = book_id)
-    rate = Rate.objects.filter(buku = book)
-    comment = Comment.objects.filter(buku = book)
-    
+    book = Book.objects.get(pk=book_id)
+    rate = Rate.objects.filter(buku=book)
+    comment = Comment.objects.filter(buku=book)
+
+    try:
+        global_filter = Filter.objects.first()
+        if global_filter is not None:
+            default_filter = global_filter.filter_type
+        else:
+            default_filter = 'terbaru'
+    except Filter.DoesNotExist:
+        default_filter = 'terbaru'
+
+    # Check if book.average_rate is not None before performing floor division
+    average_rate_floored = book.average_rate // 1 if book.average_rate is not None else 0
+
     context = {
         "book": book,
         "rate": rate,
-        "average_rate_floored": book.average_rate//1, #due to lack of flexibility from django template if-else statement
-        "comment": comment
+        "average_rate_floored": average_rate_floored,
+        "comment": comment,
+        "default_filter": default_filter,
     }
+
+    if request.user.is_authenticated:
+        context['last_login'] = request.COOKIES['last_login']
+
     return render(request, "preview.html", context)
 
+
+@login_required
 def add_rating_comment(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     data = {'success': False}
@@ -89,8 +107,6 @@ def recomendation_book(request, book_id):
         entries = Book.objects.filter(genres=book_genres).exclude(pk=book.pk)
     else:
         entries = Book.objects.filter(average_rate__gte=4).exclude(pk=book.pk)
-
-    entries_data = serializers.serialize("json", entries)
     
     list = []
     for row in entries:
@@ -108,9 +124,44 @@ def recomendation_book(request, book_id):
             })
     return HttpResponse(json.dumps(list), content_type="application/json")
 
-    # Return the serialized data as a JSON response
-    return JsonResponse(entries_data, safe=False)
 
+def filter_comments(request, filter_type, book_id):
+    book_comment = Comment.objects.filter(buku__pk = book_id) 
 
+    if filter_type == 'recent':
+        comments = book_comment.order_by('-id')[:6]
+    elif filter_type == 'random':
+        all_comments = book_comment.all()
+        if all_comments.count() <= 6:
+            comments = all_comments 
+        else:
+            random_comments = sample(list(all_comments), 6)
+            comments = book_comment.filter(id__in=[c.id for c in random_comments])
+    
+    comment_data = [
+        {
+            'komentar': comment.komentar,
+            'book_title': comment.buku.title,
+            'user': comment.user.username
+        }
+        for comment in comments
+    ]
+    return JsonResponse({'comments': comment_data})
 
-
+def update_global_filter_settings(request):
+    if request.user.is_staff:
+        try:
+            global_filter = Filter.objects.first()
+            if global_filter is not None:
+                filter_type = request.GET.get('filter_type')
+                global_filter.filter_type = filter_type
+                global_filter.save()
+                return JsonResponse({'success': True})
+            else:
+                filter_type = request.GET.get('filter_type', 'terbaru')
+                Filter.objects.create(filter_type=filter_type)
+                return JsonResponse({'success': True})
+        except Filter.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Filter does not exist'})
+    else:
+        return JsonResponse({'success': False, 'error': 'Permission denied'})

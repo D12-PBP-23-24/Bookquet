@@ -1,26 +1,27 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block meta %}
+    <meta charset="UTF-8"/>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/previewStyle.css' %}">
+{% endblock meta %}
+
 {% block content %}
-<style>
-  /* Add your CSS styles for the star rating here */
-  .star-rating img {
-    cursor: pointer;
-    width: 50px;
-    height: 50px;
-  }
-</style>
 
-<div class="d-flex flex-column">
-  <h2>Rate {{ book.title }}</h2>
+<div class="d-flex flex-column h-full justify-content-center align-items-center container text-center gap-2">
+  <h3>Beri Penilaian pada Buku {{ book.title }}</h3>
 
-  <form id="rating-comment-form">
+  <form id="rating-comment-form" class="d-flex flex-column gap-3">
     {% csrf_token %}
-    <div class="form-group">
-      <label for="komentar">Comment:</label>
-      <textarea id="comment" name="comment" class="form-control"></textarea>
-    </div>
-
     <div class="star-rating" data-rating="0" for="rating">
       <img src="{% static 'images/empty-star.png' %}" alt="Empty Star" data-rating="1">
       <img src="{% static 'images/empty-star.png' %}" alt="Empty Star" data-rating="2">
@@ -29,65 +30,26 @@
       <img src="{% static 'images/empty-star.png' %}" alt="Empty Star" data-rating="5">
     </div>
 
-    <button type="button" onclick="submitRatingCommentAjax()">Add Rating & Comment</button>
+    <div class="form-floating">
+        <textarea id="comment" name="comment" class="form-control" style="min-width: 400px; min-height: 100px;"></textarea>
+        <label for="komentar">Komentar</label>
+    </div>
+
+    <button type="button" onclick="submitRatingCommentAjax()" class="btn btn-success">Kirim</button>
 </form>
 </div>
 
 <script>
   var selectedRating = 0;
 
-  function updateStarRating() {
-    var rating = parseInt(selectedRating);
-    var stars = document.querySelectorAll('.star-rating img');
-    stars.forEach(function (star, index) {
-      if (index < rating) {
-        star.src = "{% static 'images/filled-star.png' %}";
-      } else {
-        star.src = "{% static 'images/empty-star.png' %}";
-      }
-    });
-  }
-
-  document.querySelectorAll('.star-rating img').forEach(function (star) {
-    star.addEventListener('click', function () {
-      selectedRating = star.getAttribute('data-rating');
-      updateStarRating();
-    });
-  });
-
-  function showSelectedRating() {
-    alert('Selected Rating: ' + selectedRating);
-  }
-
-  function submitRatingCommentAjax() {
-    var commentText = document.getElementById('comment').value;
-
-    var starRating = selectedRating;
-
-
-    var formData = new FormData();
-    formData.append('komentar', commentText);
-    formData.append('rating', starRating);
-
-    fetch("{% url 'book_preview:add_rating_comment' book.id %}", {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}'
-        }
-    })
-    .then(response => response.json())
-
-    .then(data => {
-        if (data.success) {
-            alert('Rating and comment added successfully.');
-            window.location.href = data.redirect_url;
-        } else {
-            alert('Failed to add rating and comment: ' + data.error);
-        }
-    });
-}
+  let emptyStarIMG = "{% static 'images/empty-star.png' %}"
+  let filledStarIMG = "{% static 'images/filled-star.png' %}"
+  let ratePreviewURL = "{% url 'book_preview:add_rating_comment' book.id %}"
+  let crsf = '{{ csrf_token }}'
 
 </script>
+
+<script type="text/javascript" src="{% static 'js/rate_review.js' %}"></script>
+
 
 {% endblock content %}

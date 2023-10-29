@@ -1,0 +1,35 @@
+a{
+    text-decoration: none;
+}
+
+.h-full{
+    height: 95vh;
+}
+
+.font-lato{
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+}
+
+.font-light{
+    font-family: 'Lato', sans-serif;
+    font-weight: 900;
+}
+
+.star-rating img {
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+}
+
+.p-custom {
+    padding: 70px 100px;
+    gap: 70px;
+}
+
+@media (max-width: 768px) {
+    .p-custom {
+        padding: 30px 50px;
+        gap: 30px;
+    }
+}
