@@ -50,6 +50,15 @@ def edit_quote_of_the_day(request):
     context = {'form': form, 'quote_of_the_day': quote_of_the_day}
     return render(request, 'edit_quote.html', context)
 
+@login_required
+def admindash(request):
+    # Mengambil data kutipan yang sudah diisi dari database atau tempat penyimpanan yang sesuai
+    quote_data = {
+        'quote_text': 'So many books, so little time',
+        'author': '-Frank Zappa',
+    }
+    return render(request, 'admindash.html', quote_data)
+
 @csrf_exempt
 def get_profile_json(request):
     user = request.user
