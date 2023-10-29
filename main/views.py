@@ -1,4 +1,3 @@
-from types import NoneType
 from django.shortcuts               import render, redirect
 from django.core                    import serializers
 from django.core.serializers        import serialize
