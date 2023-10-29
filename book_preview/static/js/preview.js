@@ -32,7 +32,7 @@ async function refreshProducts(filter = "genre") {
 refreshProducts('genre');
 
 async function refreshComments(filterType) {
-    const comments = await fetchComments(filterType);
+    const comments = await fetchComments(filterType, book_id);
     const commentSection = document.getElementById("commentSection");
     commentSection.innerHTML = "";
 
@@ -52,9 +52,9 @@ async function refreshComments(filterType) {
     localStorage.setItem("currentFilterComments", filterType);
 }
 
-async function fetchComments(filterType) {
+async function fetchComments(filterType, book_id) {
     try {
-        const response = await fetch(`/filter-comments/${filterType}`);
+        const response = await fetch(`/book-preview/filter-comments/${filterType}/${book_id}`);
         if (response.ok) {
             const data = await response.json();
             return data.comments;

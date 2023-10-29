@@ -125,16 +125,18 @@ def recomendation_book(request, book_id):
     return HttpResponse(json.dumps(list), content_type="application/json")
 
 
-def filter_comments(request, filter_type):
+def filter_comments(request, filter_type, book_id):
+    book_comment = Comment.objects.filter(buku__pk = book_id) 
+
     if filter_type == 'recent':
-        comments = Comment.objects.order_by('-id')[:6]
+        comments = book_comment.order_by('-id')[:6]
     elif filter_type == 'random':
-        all_comments = Comment.objects.all()
+        all_comments = book_comment.all()
         if all_comments.count() <= 6:
             comments = all_comments 
         else:
             random_comments = sample(list(all_comments), 6)
-            comments = Comment.objects.filter(id__in=[c.id for c in random_comments])
+            comments = book_comment.filter(id__in=[c.id for c in random_comments])
     
     comment_data = [
         {

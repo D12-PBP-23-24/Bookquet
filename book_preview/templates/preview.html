@@ -141,6 +141,8 @@
 
     let currentFilterComments = "{{ default_filter }}";
     const storedFilterComments = localStorage.getItem("currentFilterComments");
+    let book_id = "{{ book.pk }}"
+
 
     if (storedFilterComments) {
         currentFilterComments = storedFilterComments;
@@ -148,53 +150,14 @@
     }
 
 
-
-
-
-
-    // async function refreshComments(filterType) {
-    //     const comments = await fetchComments(filterType);
-    //     const commentSection = document.getElementById("commentSection");
-    //     commentSection.innerHTML = "";
-
-    //     comments.forEach((comment) => {
-    //         const commentHTML = `
-    //             <div class="col-md-6">
-    //                 <div class="card mb-3">
-    //                     <div class="card-body">
-    //                         <h5>${comment.user}</h5>
-    //                         <p class="card-text">${comment.komentar}</p>
-    //                     </div>
-    //                 </div>
-    //             </div>
-    //         `;
-    //         commentSection.innerHTML += commentHTML;
-    //     });
-    //     localStorage.setItem("currentFilterComments", filterType);
-    // }
-
-    // async function fetchComments(filterType) {
-    //     try {
-    //         const response = await fetch(`/filter-comments/${filterType}/`);
-    //         if (response.ok) {
-    //             const data = await response.json();
-    //             return data.comments;
-    //         }
-    //         console.error("Error fetching comments");
-    //     } catch (error) {
-    //         console.error("Error fetching comments:", error);
-    //     }
-    //     return [];
-    // }
-
-    function filterComments(filterType) {
+    function filterComments(filterType, book_id) {
         if (currentFilterComments !== filterType) {
             currentFilterComments = filterType;
             document.getElementById("filterType").textContent = currentFilterComments;
-            refreshComments(currentFilterComments);
+            refreshComments(currentFilterComments, book_id);
         }
     }
-    refreshComments(currentFilterComments);
+    refreshComments(currentFilterComments, book_id);
 </script>
 
 <script type="text/javascript" src="{% static 'js/preview.js' %}"></script>

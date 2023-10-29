@@ -1,29 +1,41 @@
+from types import NoneType
 from django.shortcuts               import render, redirect
 from django.core                    import serializers
+from django.core.serializers        import serialize
 from django.http                    import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls                    import reverse
 from django.contrib                 import messages
 from django.contrib.auth            import authenticate, login, logout
+from django.contrib.auth.models     import User
 from django.views.decorators.csrf   import csrf_exempt
 from django.contrib.auth.decorators import login_required
 
 import json
 import datetime
 
-from main.models        import Book
+from main.models        import Book, SearchFeatureStatus, UserProfile
 from main.forms         import UserProfileForm, AddBookForm
 from read_later.views   import add_to_read_later
-from .models            import QuoteOfDay
-from .forms             import QuoteOfDayForm
 
 def show_main(request):
     form = AddBookForm(request.POST or None)
     books = Book.objects.all()
+
+    for book in books:
+        book.average_rate = book.average_rate // 1
+
+    status, created = SearchFeatureStatus.objects.get_or_create(id = 1)
+    
     context = {
-        'books': books,
-        'form': form,
-        'name' : request.user.username,
+        'books'     : books,
+        'form'      : form,
+        'name'      : request.user.username,
+        'status'    : status.enabled,
     }
+
+    if request.user.is_authenticated:
+        context['last_login']  = request.COOKIES['last_login']
+
     return render(request, "main.html", context)
 
 def get_books(request):
@@ -45,7 +57,6 @@ def register(request):
             return redirect('main:login')
     context = {'form':form}
     return render(request, 'register.html', context)
-
 
 def login_user(request):
     if request.method == 'POST':
@@ -79,24 +90,8 @@ def register(request):
     context = {'form':form}
     return render(request, 'register.html', context)
 
-def login_user(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            response = HttpResponseRedirect(reverse("main:show_main")) 
-            response.set_cookie('last_login', str(datetime.datetime.now()))
-            return response
-        else:
-            messages.info(request, 'Sorry, incorrect username or password. Please try again.')
-    context = {}
-    return render(request, 'login.html', context)
-
 @login_required
 def logout_user(request):
-    print('test')
     logout(request)
     response = HttpResponseRedirect(reverse('main:show_main'))
     response.delete_cookie('last_login')
@@ -123,32 +118,33 @@ def read_later_book(request, book_id):
     return add_to_read_later(request=request, book_id=book_id)
 
 @login_required
-def manage_quote_of_the_day(request):
-    quote = QuoteOfDay.objects.first()
-    if request.method == 'POST':
-        form = QuoteOfDayForm(request.POST, instance=quote)
-        if form.is_valid():
-            form.save()
-    else:
-        form = QuoteOfDayForm(instance=quote)
+@csrf_exempt
+def toggle_search_feature(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        # Get the current status or create one if it doesn't exist
+        status, created = SearchFeatureStatus.objects.get_or_create(id = 1)
 
-    return render(request, 'manage_quote.html', {'form': form})
+        # Toggle the status
+        status.enabled = not status.enabled
+        status.save()
+
+        return JsonResponse({'enabled': status.enabled})
+    return JsonResponse({'error': 'Not authorized to toggle the feature status'})
 
 @login_required
-def edit_quote_of_the_day(request):
-    # Ambil objek Quote of the Day yang ada
-    quote_of_the_day = QuoteOfDay.objects.first()
-
-    if not request.user.is_staff:
-        return redirect('main:show_main')  # Redirect jika bukan admin
-
+@csrf_exempt
+def toggle_favorite_status(request, book_id):
     if request.method == 'POST':
-        form = QuoteOfDayForm(request.POST, instance=quote_of_the_day)
-        if form.is_valid():
-            form.save()
-            return redirect('main:show_main') 
-    else:
-        form = QuoteOfDayForm(instance=quote_of_the_day)
+        book = Book.objects.get(pk=book_id)
+        user = request.user
 
-    context = {'form': form, 'quote_of_the_day': quote_of_the_day}
-    return render(request, 'edit_quote.html', context)
+        if user in book.favorites.all():
+            book.favorites.remove(user)
+            is_favorite = False
+        else:
+            book.favorites.add(user)
+            is_favorite = True
+
+        book.save()
+
+        return JsonResponse({'is_favorite': is_favorite})

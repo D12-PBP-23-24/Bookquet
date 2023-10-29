@@ -45,7 +45,7 @@ def read_later_list(request):
         entries = ReadLaterBooks.objects.filter(user=request.user).filter(priority = priority)
 
     is_admin = request.user.is_staff
-    return render(request, "read_later_list2.html", context={"entries": entries, "is_admin": is_admin})
+    return render(request, "read_later_list2.html", context={"entries": entries, "is_admin": is_admin, "last_login": request.COOKIES['last_login']})
 
 @login_required
 def add_to_read_later(request, book_id):
