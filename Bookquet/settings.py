@@ -29,7 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-
+LOGIN_URL = 'main:login'
 # Application definition
 LOGIN_URL = 'main:login'
 
@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "main",
     "book_preview",
-    'read_later',
+    "read_later",
+    "dashboard",
 ]
 
 STATIC_URL = '/static/'

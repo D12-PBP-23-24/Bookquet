@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
 from main.models import Book
+from django.contrib.auth.models import User
+
 
 class ReadLaterBooks(models.Model):
     PRIORITY_CHOICES = [

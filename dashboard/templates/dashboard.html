@@ -1,0 +1,213 @@
+{% extends 'base.html' %} 
+{% block content %}
+<style>
+  .hero-container {
+    display: flex;
+    flex-direction: column;
+    background-color: #defff2;
+  }
+
+  .profile-header {
+    padding: 100px;
+    text-align: center;
+  }
+
+  .book-card {
+    margin: 10px;
+  }
+</style>
+
+<div class="hero-container">
+  <div class="profile-header">
+    <h1 class="display-4 fw-bold">User Profile</h1>
+    <h3>hello, {{user.username}}!</h3>
+  </div>
+</div>
+
+<div class="justify-content-center">
+  <div class="container text-center" id="information"></div>
+</div>
+<div class="text-center">
+  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#ProfileModal">
+    Edit Profile
+  </button>
+</div>
+<br/>
+<div class="container"> <br>
+    <h3 class="text-center display-4" style="font-size: 28px;">Buku yang sudah di rate oleh user <b>{{user.username}}</b> :</h3>
+    <br>
+      <div class="text-center">
+        <label for="rateFilter">Filter by Star Rating:</label><br><br>
+        <div class="input-group">
+        <select id="rateFilter" class="form-select">
+          <option value="all">All</option>
+          <option value="1">1 Star</option>
+          <option value="2">2 Stars</option>
+          <option value="3">3 Stars</option>
+          <option value="4">4 Stars</option>
+          <option value="5">5 Stars</option>
+        </select>
+      </div>
+      </div>
+      <br>
+
+    <div class="row"  id="ratedBooks">
+      {% for book in rated_books %}
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <img src="{{ book.cover_img }}" class="card-img-top" alt="{{ book.title }}" style="height: 400px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold"> {{ book.title }} </h5>
+                    <p class="card-text"><small class="text-body-secondary"> {{ book.author }} </small></p>
+                    <p class="card-text"><small class="text-body-success border border-success rounded p-1"> {{ book.genres }} </small></p>
+                </div>
+                <div class="card-footer text-muted">
+                    <a href="{% url 'book_preview:add_rating_comment' book.id %}" style="text-decoration: none; color: black;"> <i class="bi bi-star"></i> Edit Rate </a>
+                </div>
+            </div>      
+        </div>
+      {% endfor %}
+    </div>
+</div>
+
+<div class="modal" id="ProfileModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form action="{% url 'dashboard:edit_profile_ajax' %}" method="post" id="editForm">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Profile</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="editnickname" name="nickname" value="{{ profile.nickname }}" />
+            <label for="editnickname">Nickname</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="editage" name="age" value="{{ profile.age }}" min="0" />
+            <label for="editage">Age</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="editphone" name="phone" value="{{ profile.phone }}" />
+            <label for="editphone">Phone Number</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="editregion" name="region" value="{{ profile.region }}" />
+            <label for="editregion">Region</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-success">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+
+    $(document).ready(() => {
+        refreshProfile();
+    });
+
+    document.getElementById("rateFilter").addEventListener("change", function () {
+        const selectedFilter = this.value;
+        filterBooks(selectedFilter);
+    });
+
+    function filterBooks(selectedRating) {
+        getFilteredBooks(selectedRating)
+            .then((filteredBooks) => {
+            displayFilteredBooks(filteredBooks);
+            })
+            .catch((error) => {
+            console.error(error);
+            });
+    }
+
+    async function getFilteredBooks(filter) {
+        const response = await fetch(`{% url 'dashboard:filter_books' %}?filter=${filter}`);
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error(`Failed to fetch filtered books: ${response.statusText}`);
+        }
+    }
+
+    const ratedBooksContainer = document.getElementById("ratedBooks");
+
+    function displayFilteredBooks(filteredBooks) {
+    ratedBooksContainer.innerHTML = "";
+
+    filteredBooks.forEach((book) => {
+      const bookHTML = `
+            <div class="col-md-3">
+                <div class="card mb-4">
+                    <img src="${book.cover_img}" class="card-img-top" alt="${book.title}" style="height: 400px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">${book.title}</h5>
+                        <p class="card-text"><small class="text-body-secondary"> ${book.author}</small></p>
+                        <p class="card-text"><small class="text-body-success border border-success rounded p-1"> ${book.genres} </small></p>
+                    </div>
+                    <div class="card-footer text-muted">
+                      <a href="/book-preview/review/${book.id}/" style="text-decoration: none; color: black;"> <i class="bi bi-star"></i> Edit Rate </a>
+                  </div>
+                </div>
+            </div>
+        `;
+      ratedBooksContainer.innerHTML += bookHTML;
+    });
+  }
+
+  async function getProfile() {
+    return fetch("{% url 'dashboard:get_profile_json' %}").then((res) => res.json());
+  }
+
+  async function refreshProfile() {
+    const profile = await getProfile();
+    const informationContainer = document.getElementById("information");
+    informationContainer.innerHTML = "";
+    const htmlString = `
+        <div class="container text-center" style="margin-top: 20px; max-width: 500px;">
+            <ul class="list-group mb-4 border rounded">
+                <li class="list-group-item border-0" style="font-size: 20px; text-align: left;">
+                    <span class="fw-bold">Nickname : </span> <span id="nickname">${profile.nickname}</span>
+                </li>
+                <li class="list-group-item border-0" style="font-size: 20px; text-align: left;">
+                    <span class="fw-bold">Age : </span> <span id="age">${profile.age}</span>
+                </li>
+                <li class="list-group-item border-0" style="font-size: 20px; text-align: left;">
+                    <span class="fw-bold">Phone Number : </span> <span id="phone">${profile.phone}</span>
+                </li>
+                <li class="list-group-item border-0" style="font-size: 20px; text-align: left;">
+                    <span class="fw-bold">Region : </span> <span id="region">${profile.region}</span>
+                </li>
+            </ul>
+        </div>`;
+
+    informationContainer.innerHTML = htmlString;
+  }
+
+  $("#editForm").submit(function (event) {
+    event.preventDefault();
+
+    $.ajax({
+      type: "POST", url: $(this).prop("action"), data: $(this).serialize(),
+      success: function (response) {
+        refreshProfile();
+        // alert(response.message);
+        if (response.status == "error") console.log(response.errors);
+        $("#ProfileModal").modal("hide");
+      },
+      error: function (xhr, errmsg, err) {
+        console.log(xhr.status + ": " + xhr.responseText);
+      },
+    });
+  });
+</script>
+{% endblock content %}
+
