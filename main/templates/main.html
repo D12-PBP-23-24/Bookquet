@@ -58,8 +58,22 @@
           <cite title="Source Title">J.K. Rowling</cite>
         </figcaption>
       </figure>
+
+      <div id="quote-of-the-day">
+        <h2>Quote of the Day</h2>
+        <p id="quote-text"></p>
+        <p id="quote-author"></p>
+        {% if user.is_staff %}
+          <a href="{% url 'main:edit_quote_of_the_day' %}" class="btn btn-primary">Edit</a>
+        {% endif %}
+      </div>
+      
+
       {% if user.is_authenticated %}
         <p class="display-6 text-center fw-bold"> Selamat datang {{ name }}! 👋🏻 </p>
+        {% if user.is_staff %}
+          <p class="display-6 text-center fw-bold"> Kamu adalah admin! </p>
+        {% endif %}
       {% endif %}
     </div>
   </header>
@@ -83,13 +97,16 @@
         {% for book in books %}
           <div class="col">
             <div class="card h-100" data-genre="{{ book.genres }}">
-              <img src= {{ book.cover_img }} class="card-img-top">
+              {% comment %} TODO: tambahin link review book {% endcomment %}
+              <a href="" style="text-decoration: none; color: black;">
+                <img src= {{ book.cover_img }} class="card-img-top">
+              </a>
               <div class="card-body">
                 <h5 class="card-title fw-bold"> {{ book.title }} </h5>
                 <p class="card-text"><small class="text-body-secondary"> {{ book.author }} </small></p>
                 <p class="card-text"><small class="text-body-success border border-success rounded p-1"> {{ book.genres }} </small></p>
               </div>
-              <a href="#" class="stretched-link"></a>
+              <a href="{% url 'book_preview:show_preview' book.pk %}" class="stretched-link"></a>
               {% if user.is_authenticated %}
                 <div class="card-footer text-muted"> <i class="bi bi-bookmark-plus"></i> Read Later </div>
               {% endif %}
@@ -131,6 +148,48 @@
     </div>
   </div>
 
+  <br>
+  
+  <footer class="bg-light text-center text-lg-start">
+    <!-- Grid container -->
+    <div class="container p-4">
+      <!--Grid row-->
+      <div class="row">
+        <!--Grid column-->
+        <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+          <h5 class="fw-bold"> 📕 Bookquet 💐 </h5>
+  
+          <p>
+            Sebuah aplikasi inovatif yang menghadirkan literasi ke dalam pengalaman baru.
+            Lebih dari sekadar perpustakaan pribadi, Bookquet memanjakan pengguna melalui fitur penyimpanan buku yang akan dibaca nanti.
+            Selain itu, pengguna dapat memberikan ulasan mengenai buku yang sudah dibaca.
+          </p>
+        </div>
+        <!--Grid column-->
+  
+        <!--Grid column-->
+        <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+          <h5 class="fw-bold"> 👥 Kelompok D-12 👥</h5>
+  
+          <p>
+            Proyek ini dibuat untuk memenuhi tugas Proyek Tengah Semester (PTS) pada mata kuliah
+            Pemrograman Berbasis Platform (CSGE602022) yang diselenggarakan oleh Fakultas Ilmu Komputer, 
+            Universitas Indonesia Tahun Ajaran 2023/2024 Semester Gasal.
+          </p>
+        </div>
+        <!--Grid column-->
+      </div>
+      <!--Grid row-->
+    </div>
+    <!-- Grid container -->
+  
+    <!-- Copyright -->
+    <div class="text-center p-3 text-light" style="background-color: #408558;">
+      Copyright © 2023 D-12
+    </div> 
+    <!-- Copyright -->
+  </footer>
+
   <script>
     function searchBook() {
         const title = document.querySelector('#id_title').value;
@@ -162,17 +221,17 @@
                 const card = document.createElement('div');
                 card.className = 'col';
                 card.innerHTML = `
-                    <div class="card h-100" data-genre="${book.genres}">
-                        <img src="${book.cover_img}" class="card-img-top">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">${book.title}</h5>
-                            <p class="card-text"><small class="text-body-secondary">${book.author}</small></p>
-                            <p class="card-text"><small class="text-body-success border border-success rounded p-1">${book.genres}</small></p>
-                        </div>
-                        <a href="#" class="stretched-link"></a>
-                        {% if user.is_authenticated %}
-                          <div class="card-footer text-muted"> <i class="bi bi-bookmark-plus"></i> Read Later </div>
-                        {% endif %}
+                    <div class="card h-100" data-genre="${ book.genres }">
+                      {% comment %} TODO: tambahin link review book {% endcomment %}
+                      <a href="" style="text-decoration: none; color: black;">
+                        <img src= ${ book.cover_img } class="card-img-top">
+                      </a>
+                      <div class="card-body">
+                        <h5 class="card-title fw-bold"> ${ book.title } </h5>
+                        <p class="card-text"><small class="text-body-secondary"> ${ book.author } </small></p>
+                        <p class="card-text"><small class="text-body-success border border-success rounded p-1"> ${ book.genres } </small></p>
+                      </div>
+                      <div class="card-footer text-muted"> <a href="read-later/add-to-read-later/${ book.id }/" style="text-decoration: none; color: black;"> <i class="bi bi-bookmark-plus"></i> Read Later </a> </div>
                     </div>
                 `;
                 bukuDiv.appendChild(card);
@@ -192,6 +251,25 @@
       if (e.key === "Enter") {
         e.preventDefault(); // Prevent the default form submission action
       }
+    });
+
+    function loadQuoteOfTheDay() {
+        fetch("{% url 'main:manage_quote_of_the_day' %}")
+            .then(response => response.json())
+            .then(data => {
+                // Perbarui tampilan dengan kutipan dan penulis
+                document.getElementById('quote-text').textContent = data.quote_text;
+                document.getElementById('quote-author').textContent = '- ' + data.author;
+            })
+            .catch(error => {
+                // Tampilkan pesan kesalahan jika ada masalah
+                document.getElementById('quote-of-the-day').innerHTML = 'Terjadi kesalahan saat mengambil Quote of the Day.';
+            });
+    }
+
+    // Panggil fungsi saat halaman dimuat
+    $(document).ready(function () {
+        loadQuoteOfTheDay();
     });
   </script>
 

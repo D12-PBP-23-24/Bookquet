@@ -16,7 +16,30 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Book',
+            name="Book",
+            fields=[
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(blank=True, max_length=255, null=True)),
+                ("author", models.CharField(blank=True, max_length=255, null=True)),
+                ("description", models.TextField(blank=True, null=True)),
+                ("isbn", models.IntegerField(blank=True, null=True)),
+                ("genres", models.TextField(blank=True, null=True)),
+                ("cover_img", models.TextField(blank=True, null=True)),
+                ("year", models.IntegerField(blank=True, null=True)),
+                ("average_rate", models.FloatField(blank=True, null=True)),
+                ("user_rated", models.IntegerField(blank=True, null=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name="UserProfile",
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(blank=True, max_length=255, null=True)),

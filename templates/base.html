@@ -17,7 +17,6 @@
         <style>
             body {
                 padding-top: 40px;
-                padding-bottom: 70px;
             }
         </style>
     </head>
@@ -27,7 +26,7 @@
         {% comment %} Navigation Bar {% endcomment %}
         <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-success">
             <div class="container">
-                <a href="" class="navbar-brand mb-0 h1"> <i class="bi bi-flower1"></i> Bookquet </a>
+                <a href="{% url 'main:show_main' %}" class="navbar-brand mb-0 h1"> <i class="bi bi-flower1"></i> Bookquet </a>
 
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item active">
@@ -39,16 +38,16 @@
                             </a>
 
                             {% comment %} Fitur Read Later {% endcomment %}
-                            <a type="button" class="btn btn-outline-light btn-sm">
+                            <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'read_later:read_later_list' %}">
                                 <i class="bi bi-journal-bookmark-fill"></i>
                                 {% comment %} TODO: Tambahin URL read later {% endcomment %}
                             </a>
 
                             {% comment %} Fitur Logout {% endcomment %}
-                            <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'main:logout' %}">
+                            <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'main:logout' %}" href="{% url 'main:logout' %}">
                                 <i class="bi bi-box-arrow-right"></i>
-                                {% comment %} TODO: Tambahin URL logout {% endcomment %}
                             </a>
+                            
                         {% else %}
                             {% comment %} Fitur Login {% endcomment %}
                             <a type="button" class="btn btn-outline-light btn-sm" href="{% url 'main:login' %}">
@@ -58,7 +57,6 @@
                         {% endif %}
                     </li>
                 </ul>
-
             </div>
         </nav>
 

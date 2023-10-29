@@ -4,23 +4,42 @@ from main.models import Book, UserProfile
 from .forms import ProfileForm
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
-
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
 
-@csrf_exempt
-def show_dashboard(request):
+from book_preview.models import Rate
+from book_preview.models import Comment
 
-    user = request.user  # Mengambil objek pengguna yang sedang masuk
+@login_required
+def show_dashboard(request):
+    user = request.user 
     profile = UserProfile.objects.get(username=user.username)  
+    rated_books = get_rated_books_for_user(user)
+    commented_books = get_commented_books_for_user(user)
 
     context = {
         'user': user,
         'profile': profile,
+        'rated_books': rated_books,
+        'commented_books': commented_books,
     }
     return render(request, "dashboard.html", context)
 
+def get_rated_books_json(request):
+    user = request.user
+    rated_books = Rate.objects.filter(user=user).values_list('buku', flat=True)
+    rated_books = Book.objects.filter(pk__in=rated_books)
+    rated_books_data = [
+        {
+            "title": book.title,
+            "author": book.author,
+            "cover_img": book.cover_img,
+            "genres": book.genres,
+        }
+        for book in rated_books
+    ]
+    return JsonResponse(rated_books_data, safe=False)
 
-@csrf_exempt
 def get_profile_json(request):
     user = request.user
     profile = UserProfile.objects.get(username=user.username)
@@ -32,6 +51,41 @@ def get_profile_json(request):
         'region': profile.region,
     }
     return JsonResponse(profile_data)
+
+
+
+def filter_books(request):
+    selected_rating = request.GET.get("rating", "all")
+    user = request.user
+
+    if selected_rating == "all":
+        rated_books = Rate.objects.filter(user=user).values_list('buku', flat=True)
+    else:
+        rated_books = Rate.objects.filter(user=user, rating=selected_rating).values_list('buku', flat=True)
+
+    rated_books = Book.objects.filter(pk__in=rated_books)
+
+    filtered_books_data = [
+        {
+            "title": book.title,
+            "author": book.author,
+            "cover_img": book.cover_img,
+            "genres": book.genres,
+            "rating": Rate.objects.get(user=user, buku=book).rating
+        }
+        for book in rated_books
+    ]
+
+    return JsonResponse(filtered_books_data, safe=False)
+
+
+def get_rated_books_for_user(user):
+    rated_books = Rate.objects.filter(user=user).values_list('buku', flat=True)
+    return Book.objects.filter(pk__in=rated_books)
+
+def get_commented_books_for_user(user):
+    commented_books = Comment.objects.filter(user=user).values_list('buku', flat=True)
+    return Book.objects.filter(pk__in=commented_books)
 
 @csrf_exempt
 def edit_profile_ajax(request):

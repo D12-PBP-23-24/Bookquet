@@ -1,5 +1,5 @@
-{% extends 'dashboard_base.html' %} {% block content %}
-
+{% extends 'dashboard_base.html' %} 
+{% block content %}
 <style>
   .hero-container {
     display: flex;
@@ -12,12 +12,16 @@
     padding: 100px;
     text-align: center;
   }
+
+  .book-card {
+    margin: 10px;
+  }
 </style>
 
 <div class="hero-container">
   <div class="profile-header">
     <h1 class="display-4">User Profile</h1>
-    <h3>hello, {{user.username}} !</h3>
+    <h3>hello, {{user.username}}!</h3>
   </div>
 </div>
 
@@ -29,9 +33,46 @@
     Edit Profile
   </button>
 </div>
-<br />
+<br/>
+<div class="container">  <br>
+    <h3 class="text-center display-4" style="font-size: 28px;">Buku yang sudah di rate:</h3>
+    <br>
+    
+      <div class="text-center">
+        <label for="rateFilter">Filter by Star Rating:</label>
+        <div class="input-group">
+        <select id="rateFilter" class="form-select">
+          <option value="all">All</option>
+          <option value="1">1 Star</option>
+          <option value="2">2 Stars</option>
+          <option value="3">3 Stars</option>
+          <option value="4">4 Stars</option>
+          <option value="5">5 Stars</option>
+        </select>
+        <button id="applyFilter" class="btn btn-primary">Apply</button>
+      </div>
+      </div>
+      <br>
 
-<h3 class="container text-center">Buku yang sudah di review :</h3>
+
+    <div class="row">
+      {% for book in rated_books %}
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <img src="{{ book.cover_img }}" class="card-img-top" alt="{{ book.title }}" style="height: 400px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold"> {{ book.title }} </h5>
+                    <p class="card-text"><small class="text-body-secondary"> {{ book.author }} </small></p>
+                    <p class="card-text"><small class="text-body-success border border-success rounded p-1"> {{ book.genres }} </small></p>
+                </div>
+                <div class="card-footer text-muted">
+                    <a href="{% url 'book_preview:add_rating_comment' book.id %}" style="text-decoration: none; color: black;"> <i class="bi bi-star"></i> Edit Rate </a>
+                </div>
+            </div>      
+        </div>
+      {% endfor %}
+    </div>
+</div>
 
 <div class="modal" id="ProfileModal">
   <div class="modal-dialog modal-dialog-centered">
@@ -40,19 +81,19 @@
         {% csrf_token %}
         <div class="modal-header">
           <h5 class="modal-title">Edit Profile</h5>
-          <button type="button" class="btn-close" id="cancelButton" aria-label="Close" ></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="editnickname" name="nickname" value="{{ profile.nickname }}"/>
+            <input type="text" class="form-control" id="editnickname" name="nickname" value="{{ profile.nickname }}" />
             <label for="editnickname">Nickname</label>
           </div>
           <div class="form-floating mb-3">
-            <input type="number" class="form-control" id="editage" name="age" value="{{ profile.age }}" min="0"/>
+            <input type="number" class="form-control" id="editage" name="age" value="{{ profile.age }}" min="0" />
             <label for="editage">Age</label>
           </div>
           <div class="form-floating mb-3">
-            <input type="number" class="form-control" id="editphone" name="phone" value="{{ profile.phone }}" min="0" />
+            <input type="number" class="form-control" id="editphone" name="phone" value="{{ profile.phone }}" />
             <label for="editphone">Phone Number</label>
           </div>
           <div class="form-floating mb-3">
@@ -72,8 +113,9 @@
 </div>
 
 <script>
-
-  $(document).ready(() => { refreshProfile();});
+    $(document).ready(() => {
+        refreshProfile();
+    });
 
   async function getProfile() {
     return fetch("{% url 'dashboard:get_profile_json' %}").then((res) => res.json());
@@ -85,18 +127,18 @@
     informationContainer.innerHTML = "";
 
     const htmlString = `
-        <div class="container text-center" style="margin-top: 20px;">
+        <div class="container text-center" style="margin-top: 20px; max-width: 500px;">
             <ul class="list-group mb-4 border rounded">
-                <li class="list-group-item border-0" >
-                    <span class="fw-bold">Nickname : </span> <span id="nickname">${profile.nickname}</span> 
+                <li class="list-group-item border-0" style="font-size: 20px; text-align: left;">
+                    <span class="fw-bold">Nickname : </span> <span id="nickname">${profile.nickname}</span>
                 </li>
-                <li class="list-group-item border-0">
+                <li class="list-group-item border-0" style="font-size: 20px; text-align: left;">
                     <span class="fw-bold">Age : </span> <span id="age">${profile.age}</span>
                 </li>
-                <li class="list-group-item border-0">
+                <li class="list-group-item border-0" style="font-size: 20px; text-align: left;">
                     <span class="fw-bold">Phone Number : </span> <span id="phone">${profile.phone}</span>
                 </li>
-                <li class="list-group-item border-0">
+                <li class="list-group-item border-0" style="font-size: 20px; text-align: left;">
                     <span class="fw-bold">Region : </span> <span id="region">${profile.region}</span>
                 </li>
             </ul>
