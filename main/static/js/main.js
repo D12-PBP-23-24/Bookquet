@@ -28,18 +28,39 @@ function searchBook() {
         const card = document.createElement('div');
         card.className = 'col';
         card.innerHTML = `
-              <div class="card h-100" data-genre="${book.genres}">
-                <a href="book-preview/preview/${book.id}/'' style="text-decoration: none; color: black;">
-                  <img src= ${book.cover_img} class="card-img-top">
-                </a>
-                <div class="card-body">
-                  <h5 class="card-title fw-bold"> ${book.title} </h5>
-                  <p class="card-text"><small class="text-body-secondary"> ${book.author} </small></p>
-                  <p class="card-text"><small class="text-body-success border border-success rounded p-1"> ${book.genres} </small></p>
-                </div>
-                <div class="card-footer text-muted"> <a href="read-later/add-to-read-later/${book.id}/" style="text-decoration: none; color: black;"> <i class="bi bi-bookmark-plus"></i> Read Later </a> </div>
+            <div class="card h-100" data-genre="${book.genres}">
+              <div class="card-header d-flex justify-content-center">
+                ${(() => {
+                  let starsHtml = "";
+                  for (let i = 0; i < 5; i++) {
+                    if (i < book.average_rate) {
+                      starsHtml += '<i class="bi bi-star-fill"></i>';
+                    } else {
+                      starsHtml += '<i class="bi bi-star"></i>';
+                    }
+                  }
+                  return starsHtml;
+                })()}
+              </div>  
+
+              <a href="book-preview/preview/${book.id}/'' style="text-decoration: none; color: black;">
+                <img src= ${book.cover_img} class="card-img-top">
+              </a>
+              
+              <div class="card-body">
+                <h5 class="card-title fw-bold"> ${book.title} </h5>
+                <p class="card-text"><small class="text-body-secondary"> ${book.author} </small></p>
+                <p class="card-text"><small class="text-body-success border border-success rounded p-1"> ${book.genres} </small></p>
               </div>
-          `;
+              ${userAuthenticated ? `
+                <div class="card-footer text-muted">
+                  <a href="read-later/add-to-read-later/${book.id}/" style="text-decoration: none; color: black;">
+                    <i class="bi bi-bookmark-plus"></i> Read Later
+                  </a>
+                </div>
+              ` : ``}
+            </div>
+          `;        
         bukuDiv.appendChild(card);
       });
     })
@@ -89,4 +110,42 @@ document.getElementById('flexSwitchCheckChecked').addEventListener('change', fun
   }
 });
 
-document.getElementById('')
+// Function to toggle the favorite status
+function toggleFavoriteStatus(bookId) {
+  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  fetch(`/toggle-favorite/${bookId}/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRFToken': csrfToken,
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      // Toggle the heart icon based on the response
+      const button = document.querySelector(`.favorite-button[data-book-id="${bookId}"]`);
+      if (data.is_favorite) {
+        button.innerHTML = '<i class="bi bi-heart-fill"></i>';
+      } else {
+        button.innerHTML = '<i class="bi bi-heart"></i>';
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
+
+// Add an event listener to the heart button
+document.querySelectorAll('.favorite-button').forEach(button => {
+  button.addEventListener('click', function () {
+    const bookId = this.getAttribute('data-book-id');
+    toggleFavoriteStatus(bookId);
+  });
+});
