@@ -25,5 +25,6 @@ urlpatterns = [
     path("book-preview/", include("book_preview.urls")),
     path("read-later/", include('read_later.urls')),
     path('dashboard/', include('dashboard.urls')),
+    path('auth/', include('authentication.urls')),
 ]
  

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "adminpage",
     "read_later",
     "dashboard",
+    "authentication",
     "corsheaders",
 ]
 
