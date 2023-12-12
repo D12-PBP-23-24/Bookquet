@@ -1,6 +1,8 @@
 django
+django-environ
 gunicorn
 whitenoise
 psycopg2-binary
 requests
 urllib3
+django-corsheaders

@@ -60,60 +60,60 @@ def logout(request):
         "message": "Logout failed"
         }, status=401)
     
-@csrf_exempt
-def register(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        print(data)
-        username = data['username']
-        password = data['password']
-        password_confirmation = data['confirmPassword']
+# @csrf_exempt
+# def register(request):
+#     if request.method == "POST":
+#         data = json.loads(request.body)
+#         print(data)
+#         username = data['username']
+#         password = data['password']
+#         password_confirmation = data['confirmPassword']
 
-        if password != password_confirmation:
-            return JsonResponse({
-                "status": "Gagal",
-                "message": "Password tidak sama."
-            }, status=401)
+#         if password != password_confirmation:
+#             return JsonResponse({
+#                 "status": "Gagal",
+#                 "message": "Password tidak sama."
+#             }, status=401)
 
-        # Check if user already exists
-        if User.objects.filter(username=username).exists():
-            return JsonResponse({
-                "status": False,
-                "message": "Register gagal, username sudah digunakan."
-            }, status=400)
+#         # Check if user already exists
+#         if User.objects.filter(username=username).exists():
+#             return JsonResponse({
+#                 "status": False,
+#                 "message": "Register gagal, username sudah digunakan."
+#             }, status=400)
 
-        # Create new user
-        user = User.objects.create_user(username=username, password=password)
-        user.save()
+#         # # Create new user
+#         # user = User.objects.create_user(username=username, password=password)
+#         # user.save()
 
-        # Create user profile
-        nickname = data['nickname']
-        try:
-            phone = int(data['phone'])
-        except ValueError:
-            return JsonResponse({
-                "status": False,
-                "message": "Phone number must be an integer."
-            }, status=400)
-        try:
-            age = int(data['age'])
-        except ValueError:
-            return JsonResponse({
-                "status": False,
-                "message": "Age number must be an integer."
-            }, status=400)
-        region = data['region']
+#         # Create user profile
+#         nickname = data['nickname']
+#         try:
+#             phone = int(data['phone'])
+#         except ValueError:
+#             return JsonResponse({
+#                 "status": False,
+#                 "message": "Phone number must be an integer."
+#             }, status=400)
+#         try:
+#             age = int(data['age'])
+#         except ValueError:
+#             return JsonResponse({
+#                 "status": False,
+#                 "message": "Age number must be an integer."
+#             }, status=400)
+#         region = data['region']
         
-        user_profile = UserProfile(user=user, nickname=nickname, phone=phone, age=age, region=region)
-        user_profile.save()
+#         user_profile = UserProfile(username=username, password=password, nickname=nickname, phone=phone, age=age, region=region)
+#         user_profile.save()
 
-        return JsonResponse({
-            "status": "Register berhasil!",
-            "message": "Register berhasil!"
-        }, status=201)
+#         return JsonResponse({
+#             "status": "Register berhasil!",
+#             "message": "Register berhasil!"
+#         }, status=201)
 
-    else:
-        return JsonResponse({
-            "status": False,
-            "message": "Invalid request"
-        }, status=400)
+#     else:
+#         return JsonResponse({
+#             "status": False,
+#             "message": "Invalid request"
+#         }, status=400)
