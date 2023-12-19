@@ -211,7 +211,6 @@ def add_review_mobile(request, book_id):
     if rate != -1 and comment != '':
         existing_rating = Rate.objects.filter(buku=book, user=user).first()
         existing_komentar = Comment.objects.filter(buku=book, user=user).first()
-        existing_rating_2 = Book.objects.filter(pk=book_id).first()
 
         if existing_rating:
             existing_rating.rating = rate
