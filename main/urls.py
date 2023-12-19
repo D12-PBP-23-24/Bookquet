@@ -1,5 +1,5 @@
 from django.urls import path
-from main.views import show_main, get_books, get_book_json, find_book, register, login_user, logout_user, read_later_book, toggle_search_feature, toggle_favorite_status, feedback_list, add_feedback, delete_feedback
+from main.views import show_main, get_books, get_book_json, find_book, register, login_user, logout_user, read_later_book, toggle_search_feature, toggle_favorite_status, feedback_list, add_feedback, delete_feedback, get_feedback
 
 app_name = 'main'
 
@@ -17,4 +17,5 @@ urlpatterns = [
     path('feedback/', feedback_list, name='feedback_list'),
     path('feedback/add/', add_feedback, name='add_feedback'),
     path('feedback/delete/<int:feedback_id>/', delete_feedback, name='delete_feedback'),
+    path('get-feedback/', get_feedback, name='get_feedback')
 ]

@@ -159,7 +159,7 @@ def feedback_list(request):
             'id': feedback.id,
             'user': feedback.user.username,
             'comment': feedback.comment,
-            # 'timestamp': feedback.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+            'timestamp': feedback.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
         })
 
     return JsonResponse({'feedbacks': feedback_list})
@@ -173,13 +173,13 @@ def add_feedback(request):
         feedback = AppFeedback.objects.create(
             user=request.user, 
             comment=comment, 
-            # timestamp=datetime.datetime.now()
+            timestamp=datetime.datetime.now()
             )
         return JsonResponse({
             'id': feedback.id, 
             'user': feedback.user.username, 
             'comment': feedback.comment, 
-            # 'timestamp': feedback.timestamp.strftime('%Y-%m-%d %H:%M:%S'), 
+            'timestamp': feedback.timestamp.strftime('%Y-%m-%d %H:%M:%S'), 
             'status': 200}, status=200)
     else:
         return JsonResponse({'error': 'Comment cannot be empty'}, status=400)
@@ -193,3 +193,7 @@ def delete_feedback(request, feedback_id):
         return JsonResponse({'message': 'Feedback deleted successfully', 'status':204}, status=204)
     else:
         return JsonResponse({'error': 'Feedback not found'}, status=404)
+    
+def get_feedback(request):
+    data = AppFeedback.objects.all()
+    return HttpResponse(serializers.serialize("json", data))
