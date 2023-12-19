@@ -91,7 +91,7 @@ class Migration(migrations.Migration):
                 ("title", models.CharField(blank=True, max_length=255, null=True)),
                 ("author", models.CharField(blank=True, max_length=255, null=True)),
                 ("description", models.TextField(blank=True, null=True)),
-                ("isbn", models.IntegerField(blank=True, null=True)),
+                ("isbn", models.TextField(blank=True, null=True)),
                 ("genres", models.TextField(blank=True, null=True)),
                 ("cover_img", models.TextField(blank=True, null=True)),
                 ("year", models.IntegerField(blank=True, null=True)),
