@@ -159,7 +159,7 @@ def feedback_list(request):
             'id': feedback.id,
             'user': feedback.user.username,
             'comment': feedback.comment,
-            'timestamp': feedback.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+            # 'timestamp': feedback.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
         })
 
     return JsonResponse({'feedbacks': feedback_list})
@@ -170,8 +170,17 @@ def add_feedback(request):
     comment = request.POST.get('comment')
 
     if comment != "":
-        feedback = AppFeedback.objects.create(user=request.user, comment=comment, timestamp=datetime.datetime.now())
-        return JsonResponse({'id': feedback.id, 'user': feedback.user.username, 'comment': feedback.comment, 'timestamp': feedback.timestamp.strftime('%Y-%m-%d %H:%M:%S'), 'status': 200}, status=200)
+        feedback = AppFeedback.objects.create(
+            user=request.user, 
+            comment=comment, 
+            # timestamp=datetime.datetime.now()
+            )
+        return JsonResponse({
+            'id': feedback.id, 
+            'user': feedback.user.username, 
+            'comment': feedback.comment, 
+            # 'timestamp': feedback.timestamp.strftime('%Y-%m-%d %H:%M:%S'), 
+            'status': 200}, status=200)
     else:
         return JsonResponse({'error': 'Comment cannot be empty'}, status=400)
 
