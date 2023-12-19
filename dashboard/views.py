@@ -26,8 +26,8 @@ def show_dashboard(request):
     }
     return render(request, "dashboard.html", context)
 
-@csrf_exempt
 @login_required
+@csrf_exempt
 def update_profile_flutter(request):
     if request.method == 'POST':
         # Assuming the user profile is associated with the logged-in user

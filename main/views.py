@@ -164,14 +164,14 @@ def feedback_list(request):
 
     return JsonResponse({'feedbacks': feedback_list})
 
-@login_required
+# @login_required
 @csrf_exempt
 def add_feedback(request):
     comment = request.POST.get('comment')
 
     if comment != "":
         feedback = AppFeedback.objects.create(user=request.user, comment=comment, timestamp=datetime.datetime.now())
-        return JsonResponse({'id': feedback.id, 'user': feedback.user.username, 'comment': feedback.comment, 'timestamp': feedback.timestamp.strftime('%Y-%m-%d %H:%M:%S'), 'status': 201}, status=201)
+        return JsonResponse({'id': feedback.id, 'user': feedback.user.username, 'comment': feedback.comment, 'timestamp': feedback.timestamp.strftime('%Y-%m-%d %H:%M:%S'), 'status': 200}, status=200)
     else:
         return JsonResponse({'error': 'Comment cannot be empty'}, status=400)
 
