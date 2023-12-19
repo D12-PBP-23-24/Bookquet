@@ -10,6 +10,7 @@ from django.urls import reverse
 import json
 from django.http import JsonResponse
 from random import sample
+from django.views.decorators.csrf import csrf_exempt
 
 def show_preview(request, book_id):
     book = Book.objects.get(pk=book_id)
@@ -165,3 +166,65 @@ def update_global_filter_settings(request):
             return JsonResponse({'success': False, 'error': 'Filter does not exist'})
     else:
         return JsonResponse({'success': False, 'error': 'Permission denied'})
+
+def show_preview_mobile(request, book_id):
+    book = Book.objects.get(pk=book_id)
+    rates = Rate.objects.filter(buku=book)
+    comments = Comment.objects.filter(buku=book)
+
+    book_data = {
+        "title": book.title,
+        "author": book.author,
+        "description": book.description,
+        "genres": book.genres,
+        "cover_img": book.cover_img,
+        "year": book.year,
+        "user_rated": book.user_rated
+    }
+
+    total_rating = sum(rate.rating for rate in rates)
+    average_rating = total_rating / len(rates) if len(rates) > 0 else 0
+    rate_data = {
+        "average_rating": average_rating
+    }
+
+    comment_data = [
+        {"comment": comment.komentar, "user": comment.user.username} for comment in comments
+    ]
+
+    data = {
+        "book": book_data,
+        "rate": rate_data,
+        "comments": comment_data
+    }
+
+    return JsonResponse(data)
+
+@csrf_exempt
+def add_review_mobile(request, book_id):
+    user = request.user
+    book = get_object_or_404(Book, id=book_id)
+
+    rate = int(request.POST.get('rate'))
+    comment = request.POST.get('comment')
+
+    if rate != -1 and comment != '':
+        existing_rating = Rate.objects.filter(buku=book, user=user).first()
+        existing_komentar = Comment.objects.filter(buku=book, user=user).first()
+        existing_rating_2 = Book.objects.filter(pk=book_id).first()
+
+        if existing_rating:
+            existing_rating.rating = rate
+            existing_komentar.komentar = comment
+            existing_rating.save()
+            existing_komentar.save()
+        else:
+            Rate.objects.create(buku=book, user=user, rating=rate)
+            Comment.objects.create(buku=book, user=user, komentar=comment)
+
+        book.average_rate = rate
+        book.save()
+
+        return JsonResponse({"status": 201}) 
+    else:
+        return JsonResponse({"status": 500})

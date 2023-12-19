@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render
 
 from main.models import Book, UserProfile
@@ -25,6 +26,23 @@ def show_dashboard(request):
     }
     return render(request, "dashboard.html", context)
 
+@csrf_exempt
+@login_required
+def update_profile_flutter(request):
+    if request.method == 'POST':
+        # Assuming the user profile is associated with the logged-in user
+        profile = request.user.userprofile
+
+        profile.nickname = request.POST.get("nickname")
+        profile.phone = request.POST.get("phone")
+        profile.age = request.POST.get("age")
+        profile.region = request.POST.get("region")
+        profile.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+    
 def get_rated_books_json(request):
     user = request.user
     rated_books = Rate.objects.filter(user=user).values_list('buku', flat=True)
@@ -44,6 +62,7 @@ def get_profile_json(request):
     user = request.user
     profile = UserProfile.objects.get(username=user.username)
     profile_data = {
+        'pk': profile.pk,
         'nickname': profile.nickname,
         'username': profile.username,
         'age': profile.age,
@@ -51,8 +70,11 @@ def get_profile_json(request):
         'region': profile.region,
     }
     return JsonResponse(profile_data)
-
-
+                                              
+def get_profile(request):
+    user = request.user
+    data = UserProfile.objects.filter(username=user.username)
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 def filter_books_view(request):
     filter_param = request.GET.get("filter")

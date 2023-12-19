@@ -1,5 +1,5 @@
 from django.urls import path
-from main.views import show_main, get_books, get_book_json, find_book, register, login_user, logout_user, read_later_book, toggle_search_feature, toggle_favorite_status
+from main.views import show_main, get_books, get_book_json, find_book, register, login_user, logout_user, read_later_book, toggle_search_feature, toggle_favorite_status, feedback_list, add_feedback, delete_feedback
 
 app_name = 'main'
 
@@ -14,6 +14,7 @@ urlpatterns = [
     path('read-later/add-to-read-later/<int:book_id>/', read_later_book, name="read_later_book"),
     path('toggle-search-feature/', toggle_search_feature, name='toggle_search_feature'),
     path('toggle-favorite/<int:book_id>/', toggle_favorite_status, name='toggle_favorite_status'),
+    path('feedback/', feedback_list, name='feedback_list'),
+    path('feedback/add/', add_feedback, name='add_feedback'),
+    path('feedback/delete/<int:feedback_id>/', delete_feedback, name='delete_feedback'),
 ]
-
-

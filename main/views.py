@@ -12,8 +12,8 @@ from django.contrib.auth.decorators import login_required
 import json
 import datetime
 
-from main.models        import Book, SearchFeatureStatus, UserProfile
-from main.forms         import UserProfileForm, AddBookForm
+from main.models        import Book, SearchFeatureStatus, UserProfile, AppFeedback
+from main.forms         import UserProfileForm, AddBookForm, AppFeedbackForm
 from read_later.views   import add_to_read_later
 
 def show_main(request):
@@ -119,7 +119,8 @@ def read_later_book(request, book_id):
 @login_required
 @csrf_exempt
 def toggle_search_feature(request):
-    if request.user.is_authenticated and request.user.is_staff:
+    # if request.user.is_authenticated and request.user.is_staff:
+    if request.user.is_authenticated:
         # Get the current status or create one if it doesn't exist
         status, created = SearchFeatureStatus.objects.get_or_create(id = 1)
 
@@ -147,3 +148,39 @@ def toggle_favorite_status(request, book_id):
         book.save()
 
         return JsonResponse({'is_favorite': is_favorite})
+
+@csrf_exempt    
+def feedback_list(request):
+    feedbacks = AppFeedback.objects.all()
+    feedback_list = []
+
+    for feedback in feedbacks:
+        feedback_list.append({
+            'id': feedback.id,
+            'user': feedback.user.username,
+            'comment': feedback.comment,
+            'timestamp': feedback.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+        })
+
+    return JsonResponse({'feedbacks': feedback_list})
+
+@login_required
+@csrf_exempt
+def add_feedback(request):
+    comment = request.POST.get('comment')
+
+    if comment != "":
+        feedback = AppFeedback.objects.create(user=request.user, comment=comment, timestamp=datetime.datetime.now())
+        return JsonResponse({'id': feedback.id, 'user': feedback.user.username, 'comment': feedback.comment, 'timestamp': feedback.timestamp.strftime('%Y-%m-%d %H:%M:%S'), 'status': 201}, status=201)
+    else:
+        return JsonResponse({'error': 'Comment cannot be empty'}, status=400)
+
+@csrf_exempt
+def delete_feedback(request, feedback_id):
+    feedback = AppFeedback.objects.filter(id=feedback_id).first()
+
+    if feedback:
+        feedback.delete()
+        return JsonResponse({'message': 'Feedback deleted successfully', 'status':204}, status=204)
+    else:
+        return JsonResponse({'error': 'Feedback not found'}, status=404)

@@ -14,9 +14,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path
-from book_preview.views import show_preview, add_rating_comment, recomendation_book, update_global_filter_settings, filter_comments
+from book_preview.views import show_preview, add_rating_comment, recomendation_book, update_global_filter_settings, filter_comments, show_preview_mobile, add_review_mobile
 
 app_name = 'book_preview'
 
@@ -26,4 +25,6 @@ urlpatterns = [
     path('preview/json/<int:book_id>', recomendation_book, name="book_recomendation_json"),
     path('filter-comments/<str:filter_type>/<int:book_id>', filter_comments, name='filter_comments'),
     path('update-global-filter/', update_global_filter_settings, name='update_global_filter_settings'),
+    path('preview-mobile/<int:book_id>/', show_preview_mobile, name='show_preview_mobile'),
+    path('add-review-mobile/<int:book_id>/', add_review_mobile, name='add_review_mobile')
 ]

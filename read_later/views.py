@@ -13,6 +13,7 @@ from django.contrib.auth import logout
 from django.urls import reverse
 from django.contrib import messages  
 import json
+from django.conf import settings
 
 @login_required
 def read_later_list_json(request):
@@ -33,8 +34,8 @@ def read_later_list_json(request):
                 'cover_img': row.book.cover_img,
                 'year': row.book.year
             })
+
     return HttpResponse(json.dumps(list), content_type="application/json")
-    # return HttpResponse(serializers.serialize('json', entries))
 
 @login_required
 def read_later_list(request):
@@ -54,10 +55,8 @@ def add_to_read_later(request, book_id):
     if request.method == 'POST':
         form = AddToReadLaterForm(request.POST)
         if form.is_valid():
-            # priority = form.cleaned_data['priority']
             priority = request.POST.get('priority')
             ReadLaterBooks.objects.get_or_create(user=request.user, book=book, priority=priority)
-            # return redirect(reverse('read_later:read_later_list'))
             data['success'] = True
             data['redirect_url'] = reverse('read_later:read_later_list')
             return JsonResponse(data)
@@ -74,24 +73,41 @@ def add_to_read_later(request, book_id):
     }
     return render(request, 'add_to_read_later_form.html', context)
 
+@login_required
+@csrf_exempt
+def add_to_read_later2(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+    data = {'success': False}
+
+    if request.method == 'POST':
+        # Create or update the ReadLaterBooks entry with a default priority of 'low'
+        priority = request.POST.get('priority')
+        ReadLaterBooks.objects.get_or_create(user=request.user, book=book, priority=priority)
+        return JsonResponse({'status': 'Added'})
+        # return JsonResponse(data)
+    else:
+        data['error'] = 'Invalid request method.'
+        return JsonResponse(data, status=405)
+    
 @csrf_exempt
 @login_required
 def delete_item_ajax(request, item_id):
     if request.method == 'DELETE':
+        print(request.user)
         item = ReadLaterBooks.objects.get(id=item_id)
         item.delete()
-        return HttpResponse({'status': 'DELETED'}, status=200)
+        return JsonResponse({'status': 'DELETED'})
 
 @csrf_exempt
 @login_required
 def adjust_priority_ajax(request, item_id):
-    if request.method == 'PUT':
+    if request.method == 'POST':
         item = ReadLaterBooks.objects.get(id=item_id)
         if item.priority == 'low':
             item.priority = 'medium'
         elif item.priority == 'medium':
             item.priority = 'high'
+        elif item.priority == 'high':
+            return JsonResponse({'status': 'Not UPDATED'}, status=200)
         item.save()
-        return HttpResponse({'status': 'UPDATED'}, status=200)
-
-
+        return JsonResponse({'status': 'UPDATED'}, status=200)

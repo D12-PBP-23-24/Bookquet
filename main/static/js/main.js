@@ -42,9 +42,9 @@ function searchBook() {
                   return starsHtml;
                 })()}
               </div>  
-
-              <a href="book-preview/preview/${book.id}/'' style="text-decoration: none; color: black;">
-                <img src= ${book.cover_img} class="card-img-top">
+              
+              <a href='/book-preview/preview/${book.id}/' style="text-decoration: none; color: black;">
+                <img src="${book.cover_img}" class="card-img-top">
               </a>
               
               <div class="card-body">
@@ -85,9 +85,9 @@ function enableSearchFeature() {
   const searchInner = document.querySelector('#search-inner');
 
   searchInner.innerHTML = `
-  <p class="fw-bold p-2 flex-grow-1" style="color: white; margin: auto;" id="search-prompt"> Cari buku? </p>
-  <a class="btn btn-outline-light" type="button" id="find-button"data-bs-toggle="modal" data-bs-target="#findBookModal"> <i class="bi bi-search"></i> </a>
-`;
+    <p class="fw-bold p-2 flex-grow-1" style="color: white; margin: auto;" id="search-prompt"> Cari buku? </p>
+    <a class="btn btn-outline-light" type="button" id="find-button"data-bs-toggle="modal" data-bs-target="#findBookModal"> <i class="bi bi-search"></i> </a>
+  `;
 }
 
 // Function to disable the search feature
@@ -95,8 +95,8 @@ function disableSearchFeature() {
   const searchInner = document.querySelector('#search-inner');
 
   searchInner.innerHTML = `
-  <p class="fw-bold p-2 flex-grow-1" style="color: white; margin: auto;" id="search-prompt"> Mohon maaf, fitur pencarian sedang dinonaktifkan </p>
-`;
+    <p class="fw-bold p-2 flex-grow-1" style="color: white; margin: auto;" id="search-prompt"> Mohon maaf, fitur pencarian sedang dinonaktifkan </p>
+  `;
 }
 
 // Event listener for the switch button
