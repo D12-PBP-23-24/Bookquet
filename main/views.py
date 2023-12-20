@@ -37,10 +37,12 @@ def show_main(request):
 
     return render(request, "main.html", context)
 
+@csrf_exempt
 def get_books(request):
     data = Book.objects.all()
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
+@csrf_exempt
 def get_book_json(request):
     data = Book.objects.all()
     return HttpResponse(serializers.serialize("json", data))
