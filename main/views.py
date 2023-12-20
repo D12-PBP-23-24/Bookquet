@@ -173,7 +173,7 @@ def add_feedback(request):
 
     if comment != "":
         feedback = AppFeedback.objects.create(
-            user=request.user, 
+            user=User.objects.get(username=request.POST.get('user')), 
             comment=comment, 
             timestamp=datetime.datetime.now()
             )
